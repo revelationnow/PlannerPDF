@@ -40,20 +40,49 @@
 const std::int64_t Remarkable_width_px = 1872;
 const std::int64_t Remarkable_height_px = 1404;
 
+/*!
+ * @brief
+ * Base class for the different Planner elements
+ *
+ */
 class PlannerBase : public std::enable_shared_from_this<PlannerBase> {
   protected:
   std::uint64_t _id;
+
+  /*! What section of the page is reserved for notes */
   std::double_t _note_section_percentage;
+
+  /*! representing the PDF Page that this object is controlling */
   HPDF_Page _page;
+
+  /*! The font used for the notes header */
   HPDF_Font _notes_font;
+
+  /*! The height of the page */
   HPDF_REAL _page_height;
+
+  /*! The width of the page */
   HPDF_REAL _page_width;
+
+  /*! A string representing the title of the page */
   std::string _page_title;
+
+  /*! A string represeneting the title that appears when this object is displayed in a grid of a parent page */
   std::string _grid_string;
+
+  /*! The font size of the page title */
   HPDF_REAL _page_title_font_size;
+
+  /*! The font size of the notes section title */
   HPDF_REAL _note_title_font_size;
+
+  /*! A pointer to the parent page object */
   std::shared_ptr<PlannerBase> _parent;
+
+  /*! A pointer to the left page object */
   std::shared_ptr<PlannerBase> _left;
+
+  /*! A pointer to the right page object */
   std::shared_ptr<PlannerBase> _right;
 
   public:
@@ -70,6 +99,10 @@ class PlannerBase : public std::enable_shared_from_this<PlannerBase> {
     _grid_string = grid_string;
   }
 
+  /*!
+   * @brief
+   * Create the page for this object with the given height and width
+   */
   void CreatePage(HPDF_Doc doc, std::uint64_t height, std::uint64_t width)
   {
     _page = HPDF_AddPage(doc);
@@ -80,16 +113,25 @@ class PlannerBase : public std::enable_shared_from_this<PlannerBase> {
     _page_width = width;
   }
 
+  /*!
+   * Set the navigation pointer for left sibling
+   */
   void SetLeft(std::shared_ptr<PlannerBase> & left)
   {
     _left = left;
   }
 
+  /*!
+   * Set the navigation pointer for the right sibling
+   */
   void SetRight(std::shared_ptr<PlannerBase> & right)
   {
     _right = right;
   }
 
+  /*!
+   * Base function for the build operation to create the page
+   */
   void Build()
   {
   }
@@ -104,6 +146,9 @@ class PlannerBase : public std::enable_shared_from_this<PlannerBase> {
     return _page;
   }
 
+  /*!
+   * Function to create a grid of child elements to be able to navigate to them
+   */
   void CreateGrid(
       HPDF_Doc &doc,
       HPDF_REAL x_start,
@@ -166,6 +211,9 @@ class PlannerBase : public std::enable_shared_from_this<PlannerBase> {
     _note_section_percentage = notes_section_percentage;
   }
 
+  /*!
+   * Function to generate the title of a page. The title of the page when clicked on will navigate to the parent page.
+   */
   void CreateTitle()
   {
     HPDF_Page_SetFontAndSize(_page, _notes_font, _page_title_font_size);
@@ -185,6 +233,9 @@ class PlannerBase : public std::enable_shared_from_this<PlannerBase> {
 
   }
 
+  /*!
+   * Function to setup the left and right navigation elements of the page.
+   */
   void AddNavigation()
   {
     HPDF_Page_SetFontAndSize(_page, _notes_font, _page_title_font_size);
@@ -192,33 +243,37 @@ class PlannerBase : public std::enable_shared_from_this<PlannerBase> {
     /* Add navigation to left and right */
     std::string left_string = "<-";
     std::string right_string = "->";
-    HPDF_Page_BeginText(_page);
     HPDF_REAL page_title_text_x = GetCenteredTextXPosition(_page, _page_title, 0, _page_width);
-    HPDF_Page_MoveTextPos(_page, page_title_text_x - 100, _page_height - _page_title_font_size - 10);
+
+    /* Add left navigation */
     if(NULL != _left)
     {
+      HPDF_Page_BeginText(_page);
+      HPDF_Page_MoveTextPos(_page, page_title_text_x - 100, _page_height - _page_title_font_size - 10);
       HPDF_Destination dest = HPDF_Page_CreateDestination(_left->GetPage());
       HPDF_REAL length = HPDF_Page_TextWidth(_page, left_string.c_str());
       HPDF_Rect rect = {page_title_text_x - 100 , _page_height, page_title_text_x - 100 + length, _page_height - (_page_title_font_size * 2) };
       HPDF_Annotation annotation = HPDF_Page_CreateLinkAnnot(_page, rect, dest );
+      HPDF_Page_ShowText(_page, left_string.c_str());
+      HPDF_Page_EndText(_page);
     }
-    HPDF_Page_ShowText(_page, left_string.c_str());
-    HPDF_Page_EndText(_page);
 
-    HPDF_REAL title_length = HPDF_Page_TextWidth(_page, _page_title.c_str());
-    HPDF_Page_BeginText(_page);
-    HPDF_Page_MoveTextPos(_page, page_title_text_x + title_length + 100, _page_height - _page_title_font_size - 10);
+    /* Add right navigation */
     if(NULL != _right)
     {
+      HPDF_REAL title_length = HPDF_Page_TextWidth(_page, _page_title.c_str());
+      HPDF_Page_BeginText(_page);
+      HPDF_Page_MoveTextPos(_page, page_title_text_x + title_length + 100, _page_height - _page_title_font_size - 10);
       HPDF_Destination dest = HPDF_Page_CreateDestination(_right->GetPage());
       HPDF_REAL length = HPDF_Page_TextWidth(_page, right_string.c_str());
       HPDF_Rect rect = {page_title_text_x + title_length + 100 , _page_height, page_title_text_x + title_length + 100 + length, _page_height - (_page_title_font_size * 2) };
       HPDF_Annotation annotation = HPDF_Page_CreateLinkAnnot(_page, rect, dest );
+      HPDF_Page_ShowText(_page, right_string.c_str());
+      HPDF_Page_EndText(_page);
     }
-    HPDF_Page_ShowText(_page, right_string.c_str());
-    HPDF_Page_EndText(_page);
 
   }
+
   static HPDF_REAL GetCenteredTextYPosition(HPDF_Page &page, std::string text, HPDF_REAL y_start, HPDF_REAL y_end)
   {
     HPDF_REAL height = HPDF_Page_GetCurrentFontSize(page);
@@ -231,6 +286,9 @@ class PlannerBase : public std::enable_shared_from_this<PlannerBase> {
     return x_start + ((x_end - x_start)/2) - length/2;
   }
 
+  /*!
+   * Functin to generate the notes section
+   */
   void CreateNotesSection()
   {
     HPDF_Page_SetFontAndSize(_page, _notes_font, _note_title_font_size);
@@ -252,6 +310,10 @@ class PlannerBase : public std::enable_shared_from_this<PlannerBase> {
 
 };
 
+/*!
+ * @brief
+ * Class representing a day page
+ */
 class PlannerDay:public PlannerBase {
   date::year_month_day _day;
   std::shared_ptr<PlannerBase> _parent_week;
@@ -297,6 +359,10 @@ class PlannerDay:public PlannerBase {
   }
 };
 
+/*!
+ * @brief
+ * Class representing a Week page
+ */
 class PlannerWeek:public PlannerBase  {
   unsigned char _week_num;
   date::year_month _month;
@@ -330,6 +396,10 @@ class PlannerWeek:public PlannerBase  {
 
 };
 
+/*!
+ * @brief
+ * Class representing a month page
+ */
 class PlannerMonth:public PlannerBase  {
   date::year_month _month;
 
@@ -356,6 +426,9 @@ class PlannerMonth:public PlannerBase  {
     _parent = parent_year;
   }
 
+  /*!
+   * Function to create the weekday name header
+   */
   void CreateWeekdayHeader(HPDF_Doc &doc)
   {
     std::vector<std::shared_ptr<PlannerBase> > weekdays;
@@ -387,6 +460,7 @@ class PlannerMonth:public PlannerBase  {
     return _days;
   }
 
+  /*! Function to build the days */
   void AddDays()
   {
     date::year_month_day temp1 = date::year(_month.year())/_month.month()/1;
@@ -430,7 +504,6 @@ class PlannerMonth:public PlannerBase  {
     }
   }
 
-
   void AddDaysSection(HPDF_Doc &doc)
   {
 
@@ -472,6 +545,10 @@ class PlannerMonth:public PlannerBase  {
   }
 };
 
+/*!
+ * @brief
+ * Class representing the Year page
+ */
 class PlannerYear:public PlannerBase  {
   date::year _year;
   std::vector<std::shared_ptr<PlannerBase> > _months;
@@ -578,6 +655,10 @@ class PlannerYear:public PlannerBase  {
 
 };
 
+/*!
+ * @brief
+ * The Main Planner page class
+ */
 class PlannerMain:public PlannerBase   {
   date::year_month_day _base_date;
   std::string _filename;
@@ -693,30 +774,9 @@ class PlannerMain:public PlannerBase   {
 
 int main(int argc, char *argv[])
 {
-  HPDF_Doc  pdf;
-  HPDF_Page page;
-
-  pdf = HPDF_New(NULL, NULL);
-  if (NULL == pdf)
-  {
-    std::cout<<"Failed to create PDF object"<<std::endl;
-    return 1;
-  }
-
-  page = HPDF_AddPage(pdf);
-  HPDF_Page_SetHeight(page, Remarkable_height_px);
-  HPDF_Page_SetWidth(page, Remarkable_width_px);
-
-  HPDF_SaveToFile(pdf, "test.pdf");
-  HPDF_Free(pdf);
-
   auto Test = std::make_shared<PlannerMain>(PlannerMain(2021, "planner.pdf", 5, Remarkable_height_px, Remarkable_width_px));
   Test->CreateDocument();
   Test->Build();
   Test->FinishDocument();
-
-
-
   return 0;
-
 }
