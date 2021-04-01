@@ -1013,6 +1013,37 @@ void CreateGrid(
       }
     }
   }
+
+  /* Draw grid lines in the middle of the padding */
+  for(size_t row_num = 0; row_num < num_rows; row_num++)
+  {
+    HPDF_REAL x_line_start = x_start;
+    HPDF_REAL x_line_stop  = x_stop;
+
+    HPDF_REAL y_line_start = y_start + row_num * y_step_size;
+    HPDF_REAL y_line_stop  = y_start + row_num * y_step_size;
+
+    HPDF_Page_SetLineWidth (page, 1);
+    HPDF_Page_MoveTo (page, x_line_start, page_height - y_line_start);
+    HPDF_Page_LineTo (page, x_line_stop, page_height - y_line_stop);
+    HPDF_Page_Stroke (page);
+
+  }
+
+  for(size_t col_num = 1; col_num < num_cols; col_num++)
+  {
+    HPDF_REAL x_line_start = x_start + x_step_size * col_num;
+    HPDF_REAL x_line_stop  = x_start + x_step_size * col_num;
+
+    HPDF_REAL y_line_start = y_start;
+    HPDF_REAL y_line_stop  = y_stop;
+
+    HPDF_Page_SetLineWidth (page, 1);
+    HPDF_Page_MoveTo (page, x_line_start, page_height - y_line_start);
+    HPDF_Page_LineTo (page, x_line_stop, page_height - y_line_stop);
+    HPDF_Page_Stroke (page);
+
+  }
 }
 
 /**!
