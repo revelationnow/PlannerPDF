@@ -34,11 +34,66 @@
 #include <iostream>
 #include <vector>
 #include <memory>
+#include <typeinfo>
 #include "date.h"
 #include "hpdf.h"
 
+enum PlannerTypes
+{
+  PlannerTypes_Base,
+  PlannerTypes_Day,
+  PlannerTypes_Week,
+  PlannerTypes_Month,
+  PlannerTypes_Year,
+  PlannerTypes_Main,
+};
 const std::int64_t Remarkable_width_px = 1872;
 const std::int64_t Remarkable_height_px = 1404;
+
+static HPDF_REAL GetCenteredTextYPosition(HPDF_Page &page, std::string text, HPDF_REAL y_start, HPDF_REAL y_end)
+{
+  HPDF_REAL height = HPDF_Page_GetCurrentFontSize(page);
+  return y_start + ((y_end - y_start)/2) - height/2;
+}
+
+static HPDF_REAL GetCenteredTextXPosition(HPDF_Page &page, std::string text, HPDF_REAL x_start, HPDF_REAL x_end)
+{
+  HPDF_REAL length = HPDF_Page_TextWidth(page, text.c_str());
+  return x_start + ((x_end - x_start)/2) - length/2;
+}
+
+
+class PlannerBase;
+void CreateGrid(
+    HPDF_Doc &doc,
+    HPDF_Page &page,
+    HPDF_REAL x_start,
+    HPDF_REAL y_start,
+    HPDF_REAL x_stop,
+    HPDF_REAL y_stop,
+    HPDF_REAL num_rows,
+    HPDF_REAL num_cols,
+    std::vector<std::shared_ptr<PlannerBase> > &objects,
+    bool create_annotations,
+    size_t first_entry_offset,
+    bool create_thumbnail,
+    PlannerTypes page_type,
+    PlannerTypes object_type,
+    HPDF_REAL page_height,
+    HPDF_REAL padding
+    );
+
+void FillAreaWithDots(
+    HPDF_Page &page,
+    HPDF_REAL dot_spacing_x,
+    HPDF_REAL dot_spacing_y,
+    HPDF_REAL page_height,
+    HPDF_REAL page_width,
+    HPDF_REAL x_start,
+    HPDF_REAL y_start,
+    HPDF_REAL x_stop,
+    HPDF_REAL y_stop
+    );
 
 /*!
  * @brief
@@ -99,6 +154,10 @@ class PlannerBase : public std::enable_shared_from_this<PlannerBase> {
     _grid_string = grid_string;
   }
 
+  void CreateThumbnail(HPDF_Doc & doc, HPDF_Page &page, HPDF_REAL x_start, HPDF_REAL y_start, HPDF_REAL x_stop, HPDF_REAL y_stop)
+  {
+  }
+
   /*!
    * @brief
    * Create the page for this object with the given height and width
@@ -146,65 +205,6 @@ class PlannerBase : public std::enable_shared_from_this<PlannerBase> {
     return _page;
   }
 
-  /*!
-   * Function to create a grid of child elements to be able to navigate to them
-   */
-  void CreateGrid(
-      HPDF_Doc &doc,
-      HPDF_REAL x_start,
-      HPDF_REAL y_start,
-      HPDF_REAL x_stop,
-      HPDF_REAL y_stop,
-      HPDF_REAL num_rows,
-      HPDF_REAL num_cols,
-      std::vector<std::shared_ptr<PlannerBase> > &objects,
-      bool create_annotations,
-      size_t first_entry_offset
-      )
-  {
-    if((first_entry_offset + objects.size()) > (num_rows * num_cols))
-    {
-      std::cout<<"[ERR] : Too many objects to fit in given grid"<<std::endl;
-      return;
-    }
-    HPDF_REAL x_step_size = (x_stop - x_start) / num_cols;
-    HPDF_REAL y_step_size = (y_stop - y_start) / num_rows;
-    HPDF_Font font = HPDF_GetFont (doc, "Helvetica", NULL);
-
-    HPDF_Page_SetFontAndSize (_page, font, 25);
-    size_t object_index = 0;
-
-    for(HPDF_REAL y = y_start; y < y_stop ; y = y + y_step_size)
-    {
-      for(HPDF_REAL x = x_start; x < x_stop && object_index < objects.size(); x = x + x_step_size)
-      {
-        if(first_entry_offset == 0)
-        {
-          HPDF_Page_BeginText(_page);
-          HPDF_REAL grid_x_start = GetCenteredTextXPosition(_page, GetGridString(), x, x + x_step_size);
-          HPDF_REAL grid_y_start = y_stop - y - 30;//GetCenteredTextYPosition(_page, GetGridString(), y_stop - y, y_stop - y - y_step_size);
-          HPDF_Page_MoveTextPos(_page, grid_x_start, grid_y_start);
-
-          if(true == create_annotations)
-          {
-            HPDF_Destination dest = HPDF_Page_CreateDestination(objects[object_index]->GetPage());
-            HPDF_Rect rect = {x, y_stop - y - y_step_size, x + x_step_size, y_stop - y };
-            HPDF_Annotation annotation = HPDF_Page_CreateLinkAnnot(_page, rect, dest );
-          }
-
-          HPDF_Page_ShowText(_page, objects[object_index]->GetGridString().c_str());
-          HPDF_Page_EndText(_page);
-
-          object_index++;
-        }
-        else
-        {
-          first_entry_offset--;
-        }
-      }
-    }
-
-  }
 
   void SetNotesSectionPercentage(double notes_section_percentage)
   {
@@ -241,8 +241,8 @@ class PlannerBase : public std::enable_shared_from_this<PlannerBase> {
     HPDF_Page_SetFontAndSize(_page, _notes_font, _page_title_font_size);
     HPDF_Page_SetLineWidth(_page, 1);
     /* Add navigation to left and right */
-    std::string left_string = "<-";
-    std::string right_string = "->";
+    std::string left_string = "<";
+    std::string right_string = ">";
     HPDF_REAL page_title_text_x = GetCenteredTextXPosition(_page, _page_title, 0, _page_width);
 
     /* Add left navigation */
@@ -274,18 +274,6 @@ class PlannerBase : public std::enable_shared_from_this<PlannerBase> {
 
   }
 
-  static HPDF_REAL GetCenteredTextYPosition(HPDF_Page &page, std::string text, HPDF_REAL y_start, HPDF_REAL y_end)
-  {
-    HPDF_REAL height = HPDF_Page_GetCurrentFontSize(page);
-    return y_start + ((y_end - y_start)/2) - height/2;
-  }
-
-  static HPDF_REAL GetCenteredTextXPosition(HPDF_Page &page, std::string text, HPDF_REAL x_start, HPDF_REAL x_end)
-  {
-    HPDF_REAL length = HPDF_Page_TextWidth(page, text.c_str());
-    return x_start + ((x_end - x_start)/2) - length/2;
-  }
-
   /*!
    * Functin to generate the notes section
    */
@@ -306,9 +294,56 @@ class PlannerBase : public std::enable_shared_from_this<PlannerBase> {
     HPDF_Page_ShowText(_page, notes_string.c_str());
     HPDF_Page_EndText(_page);
 
+    HPDF_Page_SetLineWidth (_page, 1);
+    HPDF_Page_MoveTo (_page, 120, 0);
+    HPDF_Page_LineTo (_page, 120, _page_height);
+    HPDF_Page_Stroke (_page);
+
+    HPDF_REAL dot_spacing = 20;
+    /*
+     * @TODO : This increases file size a lot, try replacing with a pattern fill
+    FillAreaWithDots(
+        _page,
+        dot_spacing,
+        dot_spacing,
+        _page_height,
+        _page_width,
+        95,
+        0,
+        notes_divider_x,
+        _page_height
+        );
+        */
+
+
   }
 
 };
+
+void FillAreaWithDots(
+    HPDF_Page &page,
+    HPDF_REAL dot_spacing_x,
+    HPDF_REAL dot_spacing_y,
+    HPDF_REAL page_height,
+    HPDF_REAL page_width,
+    HPDF_REAL x_start,
+    HPDF_REAL y_start,
+    HPDF_REAL x_stop,
+    HPDF_REAL y_stop
+    )
+{
+
+  for(HPDF_REAL x = x_start; x < x_stop; x = x + dot_spacing_x)
+  {
+    for(HPDF_REAL y = y_start; y < y_stop; y = y + dot_spacing_y)
+    {
+      HPDF_Page_SetLineWidth (page, 0.7);
+      HPDF_Page_MoveTo (page, x, page_height - y);
+      HPDF_Page_LineTo (page, x + 1, page_height - y + 1);
+      HPDF_Page_Stroke (page);
+    }
+  }
+}
 
 /*!
  * @brief
@@ -342,6 +377,21 @@ class PlannerDay:public PlannerBase {
     HPDF_Page_MoveTextPos(_page, years_section_text_x, _page_height - _page_title_font_size - _note_title_font_size - 10);
     HPDF_Page_ShowText(_page, year_title_string.c_str());
     HPDF_Page_EndText(_page);
+
+    /* @TODO : This increases filesize a lot, try to replace with pattern fill or background png etc 
+    FillAreaWithDots(
+        _page,
+        40,
+        40,
+        _page_height,
+        _page_width,
+        notes_divider_x,
+        0,
+        _page_width,
+        _page_height
+        );
+        */
+
 
   }
 
@@ -426,34 +476,7 @@ class PlannerMonth:public PlannerBase  {
     _parent = parent_year;
   }
 
-  /*!
-   * Function to create the weekday name header
-   */
-  void CreateWeekdayHeader(HPDF_Doc &doc)
-  {
-    std::vector<std::shared_ptr<PlannerBase> > weekdays;
-    date::weekday weekday;
-    for(size_t i = 0; i < 7; i++)
-    {
-      weekday = (date::weekday)i;
-      std::string weekday_name = format("%a", weekday);
-      weekdays.push_back(std::make_shared<PlannerBase>(PlannerBase(weekday_name)));
-    }
 
-    CreateGrid
-      (
-       doc,
-       _page_width * _note_section_percentage + 30,
-       45,
-       _page_width - 30,
-       _page_height - 65,
-       1,
-       7,
-       weekdays,
-       false,
-       0
-      );
-  }
 
   std::vector<std::shared_ptr<PlannerBase> > & GetDays()
   {
@@ -503,26 +526,92 @@ class PlannerMonth:public PlannerBase  {
       std::static_pointer_cast<PlannerDay>(day)->Build(doc);
     }
   }
+/*!
+   * Function to create the weekday name header
+   */
+  void CreateWeekdayHeader(HPDF_Doc &doc, HPDF_Page & page, HPDF_REAL x_start, HPDF_REAL y_start, HPDF_REAL x_stop, HPDF_REAL y_stop, bool create_thumbnail, HPDF_REAL padding, bool first_letter_only)
+  {
+    std::vector<std::shared_ptr<PlannerBase> > weekdays;
+    date::weekday weekday;
+    for(size_t i = 0; i < 7; i++)
+    {
+      weekday = (date::weekday)i;
+      std::string weekday_name = format("%a", weekday);
+      if(true == first_letter_only)
+      {
+        weekday_name = weekday_name.substr(0,1);
+      }
+      weekdays.push_back(std::make_shared<PlannerBase>(PlannerBase(weekday_name)));
+    }
 
-  void AddDaysSection(HPDF_Doc &doc)
+    std::cout<<"Creating weekday header"<<std::endl;
+    CreateGrid
+      (
+       doc,
+       page,
+       x_start,
+       y_start,
+       x_stop,
+       y_stop,
+       1,
+       7,
+       weekdays,
+       false,
+       0,
+       create_thumbnail,
+       PlannerTypes_Month,
+       PlannerTypes_Day,
+       _page_height,
+       padding
+      );
+  }
+
+  void AddDaysSection(HPDF_Doc &doc, HPDF_Page &page, HPDF_REAL x_start, HPDF_REAL y_start, HPDF_REAL x_stop, HPDF_REAL y_stop, bool create_thumbnail, HPDF_REAL padding)
   {
 
     date::year_month_day first_day = date::year(_month.year())/_month.month()/1;
     CreateGrid(
         doc,
-       _page_width * _note_section_percentage + 30,
-       45,
-       _page_width - 30,
-       _page_height - 105,
+        page,
+        x_start,
+        y_start,
+        x_stop,
+        y_stop,
         6,
         7,
         _days,
         true,
-        date::weekday{first_day}.c_encoding()
+        date::weekday{first_day}.c_encoding(),
+        create_thumbnail,
+        PlannerTypes_Month,
+        PlannerTypes_Day,
+        _page_height,
+        padding
         );
 
   }
 
+
+  void CreateDaysSection(HPDF_Doc & doc )
+  {
+    CreateWeekdayHeader(doc, _page, _page_width * _note_section_percentage + 30, 95, _page_width - 30, 130, false, 10, false);
+    AddDaysSection(doc, _page, _page_width * _note_section_percentage + 30, 150, _page_width - 30, _page_height - 105, false, 10);
+  }
+
+  void CreateThumbnail(HPDF_Doc & doc, HPDF_Page &page, HPDF_REAL x_start, HPDF_REAL y_start, HPDF_REAL x_stop, HPDF_REAL y_stop)
+  {
+    std::cout<<"Creating thumbnail : "
+             <<x_start
+             <<", "
+             <<y_start
+             <<", "
+             <<x_stop
+             <<", "
+             <<y_stop
+             <<std::endl;
+    CreateWeekdayHeader(doc, page, x_start, y_start + 50, x_stop, y_start + 100, false, 2, true);
+    AddDaysSection(doc, page, x_start, y_start + 100, x_stop, y_stop, false, 2);
+  }
 
   void CreateNavigation(HPDF_Doc &doc)
   {
@@ -537,10 +626,9 @@ class PlannerMonth:public PlannerBase  {
   {
     CreatePage(doc, _page_height, _page_width);
     CreateTitle();
-    CreateWeekdayHeader(doc);
     AddDays();
     BuildDays(doc);
-    AddDaysSection(doc);
+    CreateDaysSection(doc);
     CreateNotesSection();
   }
 };
@@ -581,17 +669,24 @@ class PlannerYear:public PlannerBase  {
 
   void AddMonthsSection(HPDF_Doc &doc)
   {
+    std::cout<<"Adding Months Section"<<std::endl;
     CreateGrid(
         doc,
+        _page,
         _page_width * _note_section_percentage + 15,
-        45,
+        95,
         _page_width - 15,
         _page_height - 45,
         3,
         4,
         _months,
         true,
-        0
+        0,
+        true,
+        PlannerTypes_Year,
+        PlannerTypes_Month,
+        _page_height,
+        10
         );
   }
 
@@ -712,17 +807,24 @@ class PlannerMain:public PlannerBase   {
     HPDF_Page_ShowText(_page, year_title_string.c_str());
     HPDF_Page_EndText(_page);
 
+    std::cout<<"Adding Years Section"<<std::endl;
     CreateGrid(
         doc,
+        _page,
         notes_divider_x + 20,
-        35,
+        115,
         _page_width - 20,
         _page_height - _page_title_font_size - _note_title_font_size - 50,
         _years.size(),
         1,
         _years,
         true,
-        0
+        0,
+        false,
+        PlannerTypes_Main,
+        PlannerTypes_Year,
+        _page_height,
+        10
         );
 
   }
@@ -772,9 +874,180 @@ class PlannerMain:public PlannerBase   {
   }
 };
 
+
+/**
+ * @brief
+ * A helper function to call the instance specific create thumbnail function
+ * This is a little hacky and error prone as it relies on the caller to provide the instance type.
+ * This might be helped by transitioning to std::any in the base class to store the child objects
+ * instead of shared_ptrs to PlannerBase.
+ *
+ */
+void CreateThumbnailCaller(
+    HPDF_Doc &doc,
+    HPDF_Page &page,
+    HPDF_REAL x_start,
+    HPDF_REAL y_start,
+    HPDF_REAL x_stop,
+    HPDF_REAL y_stop,
+    PlannerTypes type,
+    PlannerTypes object_type,
+    std::shared_ptr<PlannerBase> object
+    )
+{
+  switch(object_type)
+  {
+    case PlannerTypes_Month:
+      std::static_pointer_cast<PlannerMonth>(object)->CreateThumbnail(doc, page, x_start, y_start, x_stop, y_stop);
+      break;
+    default:
+      break;
+  }
+}
+
+/*!
+ * Function to create a grid of child elements to be able to navigate to them
+ */
+void CreateGrid(
+    HPDF_Doc &doc,
+    HPDF_Page &page,
+    HPDF_REAL x_start,
+    HPDF_REAL y_start,
+    HPDF_REAL x_stop,
+    HPDF_REAL y_stop,
+    HPDF_REAL num_rows,
+    HPDF_REAL num_cols,
+    std::vector<std::shared_ptr<PlannerBase> > &objects,
+    bool create_annotations,
+    size_t first_entry_offset,
+    bool create_thumbnail,
+    PlannerTypes page_type,
+    PlannerTypes object_type,
+    HPDF_REAL page_height,
+    HPDF_REAL padding
+    )
+{
+    std::cout<< "num_rows: "
+             << num_rows
+             << ", num_cols : "
+             << num_cols
+             << ", first_entry_offset : "
+             << first_entry_offset
+             << ", num objects : "
+             << objects.size()
+             << std::endl;
+  if((first_entry_offset + objects.size()) > (num_rows * num_cols))
+  {
+    std::cout<< "[ERR] : Too many objects to fit in given grid : num_rows: "
+             << num_rows
+             << ", num_cols : "
+             << num_cols
+             << ", first_entry_offset : "
+             << first_entry_offset
+             << ", num objects : "
+             << objects.size()
+             << std::endl;
+    return;
+  }
+  HPDF_REAL x_step_size = (x_stop - x_start) / num_cols;
+  HPDF_REAL y_step_size = (y_stop - y_start) / num_rows;
+  HPDF_Font font = HPDF_GetFont (doc, "Helvetica", NULL);
+
+  HPDF_Page_SetFontAndSize (page, font, 25);
+  size_t object_index = 0;
+
+  std::cout<<"Box dimensions : "
+           << x_start
+           << ", "
+           << y_start
+           << ", "
+           << x_stop
+           << ", "
+           << y_stop
+           <<std::endl;
+
+  size_t row_num = 0;
+  for(HPDF_REAL y = y_start; y < y_stop && row_num < num_rows ; y = y + y_step_size, row_num++)
+  {
+    size_t col_num = 0;
+    for(HPDF_REAL x = x_start; x < x_stop && object_index < objects.size() && col_num < num_cols; x = x + x_step_size, col_num++)
+    {
+      HPDF_REAL x_pad_start = x + padding;
+      HPDF_REAL y_pad_start = y + padding;
+      HPDF_REAL x_pad_end   = x + x_step_size - padding;
+      HPDF_REAL y_pad_end   = y + y_step_size - padding;
+      if(first_entry_offset == 0)
+      {
+        HPDF_Page_BeginText(page);
+        HPDF_REAL grid_x_start = GetCenteredTextXPosition(page, objects[object_index]->GetGridString(), x_pad_start, x_pad_end);
+        HPDF_REAL grid_y_start = page_height - y_pad_start - 30;//GetCenteredTextYPosition(page, GetGridString(), y_stop - y, y_stop - y - y_step_size);
+        HPDF_Page_MoveTextPos(page, grid_x_start, grid_y_start);
+
+        if(true == create_annotations)
+        {
+          HPDF_Destination dest = HPDF_Page_CreateDestination(objects[object_index]->GetPage());
+          HPDF_REAL rect_y_end = page_height - y_pad_end;
+          if(true == create_thumbnail)
+          {
+            rect_y_end = page_height - y_pad_start - 50;
+          }
+          HPDF_Rect rect = {x_pad_start, rect_y_end, x_pad_end, page_height - y_pad_start };
+          HPDF_Annotation annotation = HPDF_Page_CreateLinkAnnot(page, rect, dest );
+        }
+
+        HPDF_Page_ShowText(page, objects[object_index]->GetGridString().c_str());
+        HPDF_Page_EndText(page);
+
+        if(true == create_thumbnail)
+        {
+          std::cout<<objects[object_index]->GetGridString()<<std::endl;
+          std::cout<<"Calling thumbnail caller"<<std::endl;
+          CreateThumbnailCaller(doc, page, x_pad_start, y_pad_start, x_pad_end, y_pad_end, page_type, object_type, objects[object_index] );
+        }
+
+        object_index++;
+      }
+      else
+      {
+        first_entry_offset--;
+      }
+    }
+  }
+}
+
+/**!
+ * Main function to generate the file.
+ */
 int main(int argc, char *argv[])
 {
-  auto Test = std::make_shared<PlannerMain>(PlannerMain(2021, "planner.pdf", 5, Remarkable_height_px, Remarkable_width_px));
+  short start_year = 2021;
+  short num_years  = 5;
+  std::string filename = "planner.pdf";
+
+  if(argc > 1)
+  {
+    int start_year_cl = atoi(argv[1]);
+    if( (start_year_cl != 0) && (start_year_cl < 3000))
+    {
+      start_year = start_year_cl;
+    }
+  }
+
+  if(argc > 2)
+  {
+    int num_years_cl = atoi(argv[2]);
+    if( (num_years_cl > 0) && (num_years_cl < 100) )
+    {
+      num_years = num_years_cl;
+    }
+  }
+
+  if(argc > 3)
+  {
+    filename = argv[3];
+  }
+
+  auto Test = std::make_shared<PlannerMain>(PlannerMain(start_year, filename, num_years, Remarkable_height_px, Remarkable_width_px));
   Test->CreateDocument();
   Test->Build();
   Test->FinishDocument();
