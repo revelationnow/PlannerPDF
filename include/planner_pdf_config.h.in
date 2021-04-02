@@ -14,8 +14,8 @@
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
 //
-// The above copyright notice and this permission notice shall be included in all
-// copies or substantial portions of the Software.
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
 //
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -25,10 +25,10 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Our apologies.  When the previous paragraph was written, lowercase had not yet
-// been invented (that would involve another several millennia of evolution).
-// We did not mean to shout.
+// Our apologies.  When the previous paragraph was written, lowercase had not
+// yet been invented (that would involve another several millennia of
+// evolution). We did not mean to shout.
 
 // the configured options and settings for Tutorial
-#define Planner_PDF_VERSION_MAJOR @Planner_PDF_VERSION_MAJOR@
-#define Planner_PDF_VERSION_MINOR @Planner_PDF_VERSION_MINOR@
+#define Planner_PDF_VERSION_MAJOR @Planner_PDF_VERSION_MAJOR @
+#define Planner_PDF_VERSION_MINOR @Planner_PDF_VERSION_MINOR @

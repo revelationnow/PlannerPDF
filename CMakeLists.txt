@@ -19,4 +19,10 @@ target_include_directories( Planner_PDF PUBLIC
   "${PROJECT_SOURCE_DIR}/include"
                           )
 
-
+add_custom_target(
+  clangformat
+  COMMAND clang-format
+  -style=file
+  -i
+  ${PROJECT_SOURCE_DIR}/include/* ${PROJECT_SOURCE_DIR}/src/*
+  )
