@@ -1,8 +1,7 @@
-#include "planner_base.hpp"
-#include "main.hpp"
-
 #ifndef PLANNER_DAYS_HPP
 #define PLANNER_DAYS_HPP
+#include "planner_base.hpp"
+
 /*!
  * @brief
  * Class representing a day page

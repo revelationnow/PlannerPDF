@@ -1,7 +1,7 @@
-#include "planner_year.hpp"
-
 #ifndef PLANNER_MAIN_HPP
 #define PLANNER_MAIN_HPP
+#include "planner_year.hpp"
+
 /*!
  * @brief
  * The Main Planner page class
@@ -59,7 +59,6 @@ class PlannerMain:public PlannerBase   {
     HPDF_Page_ShowText(_page, year_title_string.c_str());
     HPDF_Page_EndText(_page);
 
-    std::cout<<"Adding Years Section"<<std::endl;
     CreateGrid(
         doc,
         _page,

@@ -1,7 +1,7 @@
-#include "planner_days.hpp"
-
 #ifndef PLANNER_WEEK_HPP
 #define PLANNER_WEEK_HPP
+#include "planner_days.hpp"
+
 /*!
  * @brief
  * Class representing a Week page

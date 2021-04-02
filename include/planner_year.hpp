@@ -1,7 +1,7 @@
-#include "planner_month.hpp"
-
 #ifndef PLANNER_YEAR_HPP
 #define PLANNER_YEAR_HPP
+#include "planner_month.hpp"
+
 /*!
  * @brief
  * Class representing the Year page
@@ -38,7 +38,6 @@ class PlannerYear:public PlannerBase  {
 
   void AddMonthsSection(HPDF_Doc &doc)
   {
-    std::cout<<"Adding Months Section"<<std::endl;
     CreateGrid(
         doc,
         _page,

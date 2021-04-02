@@ -100,7 +100,6 @@ class PlannerMonth:public PlannerBase  {
       weekdays.push_back(std::make_shared<PlannerBase>(PlannerBase(weekday_name)));
     }
 
-    std::cout<<"Creating weekday header"<<std::endl;
     CreateGrid
       (
        doc,
@@ -156,15 +155,6 @@ class PlannerMonth:public PlannerBase  {
 
   void CreateThumbnail(HPDF_Doc & doc, HPDF_Page &page, HPDF_REAL x_start, HPDF_REAL y_start, HPDF_REAL x_stop, HPDF_REAL y_stop)
   {
-    std::cout<<"Creating thumbnail : "
-             <<x_start
-             <<", "
-             <<y_start
-             <<", "
-             <<x_stop
-             <<", "
-             <<y_stop
-             <<std::endl;
     CreateWeekdayHeader(doc, page, x_start, y_start + 50, x_stop, y_start + 100, false, 2, true);
     AddDaysSection(doc, page, x_start, y_start + 100, x_stop, y_stop, false, 2);
   }
