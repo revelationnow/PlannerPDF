@@ -56,9 +56,9 @@ public:
                      40,
                      _page_height,
                      _page_width,
-                     notes_divider_x,
-                     (2 * _page_title_font_size),
-                     _page_width - 20,
+                     notes_divider_x + 30,
+                     (2 * _page_title_font_size) + (2 * _note_title_font_size),
+                     _page_width - 10,
                      _page_height - 30);
   }
 

@@ -64,7 +64,7 @@ public:
     CreateGrid(doc,
                _page,
                notes_divider_x + 20,
-               _page_title_font_size * 2 + _note_title_font_size + 20,
+               (_page_title_font_size * 2) + (_note_title_font_size * 2),
                _page_width - 20,
                _page_height,
                _years.size(),

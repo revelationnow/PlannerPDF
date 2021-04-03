@@ -88,8 +88,9 @@ public:
     for (HPDF_REAL x = x_start; x < x_stop; x = x + dot_spacing_x) {
       for (HPDF_REAL y = y_start; y < y_stop; y = y + dot_spacing_y) {
         HPDF_Page_SetLineWidth(page, 2);
-        HPDF_Page_MoveTo(page, x, page_height - y);
-        HPDF_Page_LineTo(page, x + 1, page_height - y + 1);
+        //HPDF_Page_MoveTo(page, x, page_height - y);
+        //HPDF_Page_LineTo(page, x + 1, page_height - y + 1);
+        HPDF_Page_Rectangle(page, x, page_height - y, 1, 1);
         HPDF_Page_Stroke(page);
       }
     }
