@@ -6,7 +6,7 @@ configure_file(include/planner_pdf_config.h.in planner_pdf_config.h)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # specify the C++ standard
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 # add the executable
 add_executable(Planner_PDF src/planner_pdf.cpp)
