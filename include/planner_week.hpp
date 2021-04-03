@@ -20,8 +20,12 @@ public:
     _page_width = Remarkable_width_px;
   }
 
-  PlannerWeek(unsigned char week, date::month month, date::year year,
-              PlannerBase* parent_month, HPDF_REAL height, HPDF_REAL width)
+  PlannerWeek(unsigned char week,
+              date::month month,
+              date::year year,
+              PlannerBase* parent_month,
+              HPDF_REAL height,
+              HPDF_REAL width)
       : _week_num(week),
         _month((date::year_month){(date::year)year, (date::month)month}),
         _parent_month(parent_month) {

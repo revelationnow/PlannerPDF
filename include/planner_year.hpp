@@ -19,8 +19,10 @@ public:
     _note_section_percentage = 0.25;
   }
 
-  PlannerYear(date::year year, std::shared_ptr<PlannerBase> parent_main,
-              HPDF_REAL height, HPDF_REAL width)
+  PlannerYear(date::year year,
+              std::shared_ptr<PlannerBase> parent_main,
+              HPDF_REAL height,
+              HPDF_REAL width)
       : _year(year) {
     _page_title = format("%Y", _year);
     _grid_string = format("%Y", _year);
@@ -35,9 +37,23 @@ public:
   date::year GetYear() { return _year; }
 
   void AddMonthsSection(HPDF_Doc& doc) {
-    CreateGrid(doc, _page, _page_width * _note_section_percentage + 15, 95,
-               _page_width - 15, _page_height - 45, 3, 4, _months, true, 0,
-               true, PlannerTypes_Year, PlannerTypes_Month, _page_height, 10);
+    CreateGrid(doc,
+               _page,
+               _page_width * _note_section_percentage + 15,
+               95,
+               _page_width - 15,
+               _page_height - 45,
+               3,
+               4,
+               _months,
+               true,
+               0,
+               true,
+               PlannerTypes_Year,
+               PlannerTypes_Month,
+               _page_height,
+               10,
+               false);
   }
 
   void BuildMonths(HPDF_Doc& doc) {
@@ -61,7 +77,9 @@ public:
     for (size_t month_id = 1; month_id <= 12; month_id++) {
       _months.push_back(std::make_shared<PlannerMonth>(
           PlannerMonth((date::year_month){_year, (date::month)month_id},
-                       shared_from_this(), _page_height, _page_width)));
+                       shared_from_this(),
+                       _page_height,
+                       _page_width)));
 
       std::shared_ptr<PlannerBase> prev_month;
 

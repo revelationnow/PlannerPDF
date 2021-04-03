@@ -20,8 +20,11 @@ public:
     _page_title = "Planner";
   }
 
-  PlannerMain(short year, std::string filename, short num_years,
-              HPDF_REAL height, HPDF_REAL width)
+  PlannerMain(short year,
+              std::string filename,
+              short num_years,
+              HPDF_REAL height,
+              HPDF_REAL width)
       : _base_date((date::year)year, (date::month)1, (date::day)1),
         _filename(filename), _num_years(num_years) {
     _page_title = "Planner";
@@ -29,8 +32,8 @@ public:
     _page_width = width;
   }
 
-  static void err_cb(HPDF_STATUS error_no, HPDF_STATUS detail_no,
-                     void* user_data) {
+  static void
+  err_cb(HPDF_STATUS error_no, HPDF_STATUS detail_no, void* user_data) {
     std::cout << "[ERR] : PDF operation error : Received error : " << std::hex
               << error_no << " with detail : " << detail_no << std::endl;
 
@@ -51,17 +54,31 @@ public:
     HPDF_REAL years_section_text_x = GetCenteredTextXPosition(
         _page, year_title_string, notes_divider_x, _page_width);
     HPDF_Page_BeginText(_page);
-    HPDF_Page_MoveTextPos(_page, years_section_text_x,
-                          _page_height - _page_title_font_size -
+    HPDF_Page_MoveTextPos(_page,
+                          years_section_text_x,
+                          _page_height - (_page_title_font_size * 2) -
                               _note_title_font_size - 10);
     HPDF_Page_ShowText(_page, year_title_string.c_str());
     HPDF_Page_EndText(_page);
 
-    CreateGrid(doc, _page, notes_divider_x + 20, 115, _page_width - 20,
-               _page_height - _page_title_font_size - _note_title_font_size -
-                   50,
-               _years.size(), 1, _years, true, 0, false, PlannerTypes_Main,
-               PlannerTypes_Year, _page_height, 10);
+    CreateGrid(doc,
+               _page,
+               notes_divider_x + 20,
+               _page_title_font_size * 2 + _note_title_font_size + 20,
+               _page_width - 20,
+               _page_height,
+               _years.size(),
+               1,
+               _years,
+               true,
+               0,
+               false,
+               PlannerTypes_Main,
+               PlannerTypes_Year,
+               _page_height,
+               10,
+               true
+               );
   }
 
   void BuildYears() {

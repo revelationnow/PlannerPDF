@@ -37,14 +37,18 @@
 #include <typeinfo>
 #include <vector>
 
-HPDF_REAL GetCenteredTextYPosition(HPDF_Page& page, std::string text,
-                                   HPDF_REAL y_start, HPDF_REAL y_end) {
+HPDF_REAL GetCenteredTextYPosition(HPDF_Page& page,
+                                   std::string text,
+                                   HPDF_REAL y_start,
+                                   HPDF_REAL y_end) {
   HPDF_REAL height = HPDF_Page_GetCurrentFontSize(page);
   return y_start + ((y_end - y_start) / 2) - height / 2;
 }
 
-HPDF_REAL GetCenteredTextXPosition(HPDF_Page& page, std::string text,
-                                   HPDF_REAL x_start, HPDF_REAL x_end) {
+HPDF_REAL GetCenteredTextXPosition(HPDF_Page& page,
+                                   std::string text,
+                                   HPDF_REAL x_start,
+                                   HPDF_REAL x_end) {
   HPDF_REAL length = HPDF_Page_TextWidth(page, text.c_str());
   return x_start + ((x_end - x_start) / 2) - length / 2;
 }
@@ -57,9 +61,13 @@ HPDF_REAL GetCenteredTextXPosition(HPDF_Page& page, std::string text,
  * base class to store the child objects instead of shared_ptrs to PlannerBase.
  *
  */
-void CreateThumbnailCaller(HPDF_Doc& doc, HPDF_Page& page, HPDF_REAL x_start,
-                           HPDF_REAL y_start, HPDF_REAL x_stop,
-                           HPDF_REAL y_stop, PlannerTypes type,
+void CreateThumbnailCaller(HPDF_Doc& doc,
+                           HPDF_Page& page,
+                           HPDF_REAL x_start,
+                           HPDF_REAL y_start,
+                           HPDF_REAL x_stop,
+                           HPDF_REAL y_stop,
+                           PlannerTypes type,
                            PlannerTypes object_type,
                            std::shared_ptr<PlannerBase> object) {
   switch (object_type) {
@@ -98,9 +106,11 @@ int main(int argc, char* argv[]) {
     filename = argv[3];
   }
 
-  auto Test = std::make_shared<PlannerMain>(
-      PlannerMain(start_year, filename, num_years, Remarkable_height_px,
-                  Remarkable_width_px));
+  auto Test = std::make_shared<PlannerMain>(PlannerMain(start_year,
+                                                        filename,
+                                                        num_years,
+                                                        Remarkable_height_px,
+                                                        Remarkable_width_px));
   Test->CreateDocument();
   Test->Build();
   Test->FinishDocument();

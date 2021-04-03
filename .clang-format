@@ -3,6 +3,8 @@
 BasedOnStyle: LLVM
 IndentWidth: 2
 AlignTrailingComments: true
+BinPackArguments: false
+BinPackParameters: false
 
 ---
 Language: Cpp

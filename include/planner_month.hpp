@@ -22,8 +22,10 @@ public:
     _note_section_percentage = 0.25;
   }
 
-  PlannerMonth(date::year_month month, std::shared_ptr<PlannerBase> parent_year,
-               HPDF_REAL height, HPDF_REAL width)
+  PlannerMonth(date::year_month month,
+               std::shared_ptr<PlannerBase> parent_year,
+               HPDF_REAL height,
+               HPDF_REAL width)
       : _month(month) {
     _page_title = format("%b %Y", _month);
     _grid_string = format("%b", _month);
@@ -42,16 +44,23 @@ public:
     size_t num_days = ((date::sys_days)temp2 - (date::sys_days)temp1).count();
 
     for (size_t i = 1; i <= num_days; i++) {
-      std::string day_page_title =
-          format("%B %d %Y", (date::year_month_day)((date::sys_days)temp1 +
-                                                    (date::days)(i - 1)));
-      std::string day_grid_title =
-          format("%d", (date::year_month_day)((date::sys_days)temp1 +
-                                              (date::days)(i - 1)));
+      std::string day_page_title = format(
+          "%B %d %Y",
+          (date::year_month_day)((date::sys_days)temp1 + (date::days)(i - 1)));
+      std::string day_grid_title = format(
+          "%d",
+          (date::year_month_day)((date::sys_days)temp1 + (date::days)(i - 1)));
 
-      _days.push_back(std::make_shared<PlannerDay>(PlannerDay(
-          temp1.day(), temp1.month(), temp1.year(), NULL, shared_from_this(),
-          _page_height, _page_width, day_page_title, day_grid_title)));
+      _days.push_back(
+          std::make_shared<PlannerDay>(PlannerDay(temp1.day(),
+                                                  temp1.month(),
+                                                  temp1.year(),
+                                                  NULL,
+                                                  shared_from_this(),
+                                                  _page_height,
+                                                  _page_width,
+                                                  day_page_title,
+                                                  day_grid_title)));
 
       std::shared_ptr<PlannerBase> prev_day;
 
@@ -79,10 +88,15 @@ public:
   /*!
    * Function to create the weekday name header
    */
-  void CreateWeekdayHeader(HPDF_Doc& doc, HPDF_Page& page, HPDF_REAL x_start,
-                           HPDF_REAL y_start, HPDF_REAL x_stop,
-                           HPDF_REAL y_stop, bool create_thumbnail,
-                           HPDF_REAL padding, bool first_letter_only) {
+  void CreateWeekdayHeader(HPDF_Doc& doc,
+                           HPDF_Page& page,
+                           HPDF_REAL x_start,
+                           HPDF_REAL y_start,
+                           HPDF_REAL x_stop,
+                           HPDF_REAL y_stop,
+                           bool create_thumbnail,
+                           HPDF_REAL padding,
+                           bool first_letter_only) {
     std::vector<std::shared_ptr<PlannerBase>> weekdays;
     date::weekday weekday;
     for (size_t i = 0; i < 7; i++) {
@@ -95,33 +109,90 @@ public:
           std::make_shared<PlannerBase>(PlannerBase(weekday_name)));
     }
 
-    CreateGrid(doc, page, x_start, y_start, x_stop, y_stop, 1, 7, weekdays,
-               false, 0, create_thumbnail, PlannerTypes_Month, PlannerTypes_Day,
-               _page_height, padding);
+    CreateGrid(doc,
+               page,
+               x_start,
+               y_start,
+               x_stop,
+               y_stop,
+               1,
+               7,
+               weekdays,
+               false,
+               0,
+               create_thumbnail,
+               PlannerTypes_Month,
+               PlannerTypes_Day,
+               _page_height,
+               padding,
+               true);
   }
 
-  void AddDaysSection(HPDF_Doc& doc, HPDF_Page& page, HPDF_REAL x_start,
-                      HPDF_REAL y_start, HPDF_REAL x_stop, HPDF_REAL y_stop,
-                      bool create_thumbnail, HPDF_REAL padding) {
+  void AddDaysSection(HPDF_Doc& doc,
+                      HPDF_Page& page,
+                      HPDF_REAL x_start,
+                      HPDF_REAL y_start,
+                      HPDF_REAL x_stop,
+                      HPDF_REAL y_stop,
+                      bool create_thumbnail,
+                      HPDF_REAL padding) {
 
     date::year_month_day first_day =
         date::year(_month.year()) / _month.month() / 1;
-    CreateGrid(doc, page, x_start, y_start, x_stop, y_stop, 6, 7, _days, true,
-               date::weekday{first_day}.c_encoding(), create_thumbnail,
-               PlannerTypes_Month, PlannerTypes_Day, _page_height, padding);
+    CreateGrid(doc,
+               page,
+               x_start,
+               y_start,
+               x_stop,
+               y_stop,
+               6,
+               7,
+               _days,
+               true,
+               date::weekday{first_day}.c_encoding(),
+               create_thumbnail,
+               PlannerTypes_Month,
+               PlannerTypes_Day,
+               _page_height,
+               padding,
+               true);
   }
 
   void CreateDaysSection(HPDF_Doc& doc) {
-    CreateWeekdayHeader(doc, _page, _page_width * _note_section_percentage + 30,
-                        95, _page_width - 30, 130, false, 10, false);
-    AddDaysSection(doc, _page, _page_width * _note_section_percentage + 30, 150,
-                   _page_width - 30, _page_height - 105, false, 10);
+    CreateWeekdayHeader(doc,
+                        _page,
+                        _page_width * _note_section_percentage + 30,
+                        (_page_title_font_size * 2),
+                        _page_width - 30,
+                        (_page_title_font_size * 2) + (_note_title_font_size * 2),
+                        false,
+                        10,
+                        false);
+    AddDaysSection(doc,
+                   _page,
+                   _page_width * _note_section_percentage + 30,
+                   150,
+                   _page_width - 30,
+                   _page_height - 105,
+                   false,
+                   10);
   }
 
-  void CreateThumbnail(HPDF_Doc& doc, HPDF_Page& page, HPDF_REAL x_start,
-                       HPDF_REAL y_start, HPDF_REAL x_stop, HPDF_REAL y_stop) {
-    CreateWeekdayHeader(doc, page, x_start, y_start + 50, x_stop, y_start + 100,
-                        false, 2, true);
+  void CreateThumbnail(HPDF_Doc& doc,
+                       HPDF_Page& page,
+                       HPDF_REAL x_start,
+                       HPDF_REAL y_start,
+                       HPDF_REAL x_stop,
+                       HPDF_REAL y_stop) {
+    CreateWeekdayHeader(doc,
+                        page,
+                        x_start,
+                        y_start + 50,
+                        x_stop,
+                        y_start + 100,
+                        false,
+                        2,
+                        true);
     AddDaysSection(doc, page, x_start, y_start + 100, x_stop, y_stop, false, 2);
   }
 
