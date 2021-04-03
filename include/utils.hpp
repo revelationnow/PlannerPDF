@@ -15,6 +15,7 @@ enum PlannerTypes {
 
 const std::int64_t Remarkable_width_px = 1872;
 const std::int64_t Remarkable_height_px = 1404;
+const std::int64_t Remarkable_margin_width_px = 120;
 HPDF_REAL GetCenteredTextYPosition(HPDF_Page& page,
                                    std::string text,
                                    HPDF_REAL y_start,

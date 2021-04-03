@@ -26,7 +26,9 @@ public:
              HPDF_REAL height,
              HPDF_REAL width,
              std::string page_title,
-             std::string grid_string)
+             std::string grid_string,
+             HPDF_REAL margin
+             )
       : _day((date::year_month_day){
             (date::year)year, (date::month)month, (date::day)day}) {
     _page_height = height;
@@ -34,6 +36,7 @@ public:
     _page_title = page_title;
     _grid_string = grid_string;
     _parent = parent_month;
+    _margin = margin;
   }
 
   void CreateTasksSection(HPDF_Doc& doc) {

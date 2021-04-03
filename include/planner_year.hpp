@@ -22,7 +22,9 @@ public:
   PlannerYear(date::year year,
               std::shared_ptr<PlannerBase> parent_main,
               HPDF_REAL height,
-              HPDF_REAL width)
+              HPDF_REAL width,
+              HPDF_REAL margin
+              )
       : _year(year) {
     _page_title = format("%Y", _year);
     _grid_string = format("%Y", _year);
@@ -30,6 +32,7 @@ public:
     _page_width = width;
     _note_section_percentage = 0.25;
     _parent = parent_main;
+    _margin = margin;
   }
 
   PlannerYear(short year) : _year((date::year)year) {}
@@ -79,7 +82,9 @@ public:
           PlannerMonth((date::year_month){_year, (date::month)month_id},
                        shared_from_this(),
                        _page_height,
-                       _page_width)));
+                       _page_width,
+                       _margin
+                       )));
 
       std::shared_ptr<PlannerBase> prev_month;
 

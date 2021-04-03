@@ -110,7 +110,9 @@ int main(int argc, char* argv[]) {
                                                         filename,
                                                         num_years,
                                                         Remarkable_height_px,
-                                                        Remarkable_width_px));
+                                                        Remarkable_width_px,
+                                                        Remarkable_margin_width_px
+                                                        ));
   Test->CreateDocument();
   Test->Build();
   Test->FinishDocument();

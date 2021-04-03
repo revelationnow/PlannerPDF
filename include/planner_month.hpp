@@ -25,7 +25,9 @@ public:
   PlannerMonth(date::year_month month,
                std::shared_ptr<PlannerBase> parent_year,
                HPDF_REAL height,
-               HPDF_REAL width)
+               HPDF_REAL width,
+               HPDF_REAL margin
+               )
       : _month(month) {
     _page_title = format("%b %Y", _month);
     _grid_string = format("%b", _month);
@@ -60,7 +62,9 @@ public:
                                                   _page_height,
                                                   _page_width,
                                                   day_page_title,
-                                                  day_grid_title)));
+                                                  day_grid_title,
+                                                  _margin
+                                                  )));
 
       std::shared_ptr<PlannerBase> prev_day;
 

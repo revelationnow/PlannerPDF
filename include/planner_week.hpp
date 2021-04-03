@@ -25,12 +25,14 @@ public:
               date::year year,
               PlannerBase* parent_month,
               HPDF_REAL height,
-              HPDF_REAL width)
+              HPDF_REAL width,
+              HPDF_REAL margin)
       : _week_num(week),
         _month((date::year_month){(date::year)year, (date::month)month}),
         _parent_month(parent_month) {
     _page_height = height;
     _page_width = width;
+    _margin = margin;
   }
 
   void Build(HPDF_Doc& doc) {

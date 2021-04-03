@@ -33,6 +33,9 @@ protected:
   /*! The width of the page */
   HPDF_REAL _page_width;
 
+  /*! The left margin of the page */
+  HPDF_REAL _margin;
+
   /*! A string representing the title of the page */
   std::string _page_title;
 
@@ -59,12 +62,12 @@ public:
   PlannerBase()
       : _id(0), _note_section_percentage(0.5), _page_title("Base"),
         _page_title_font_size(45), _note_title_font_size(35),
-        _grid_string("GridBase") {}
+        _grid_string("GridBase"), _margin(Remarkable_margin_width_px) {}
 
   PlannerBase(std::string grid_string)
       : _id(0), _note_section_percentage(0.5), _page_title("Base"),
         _page_title_font_size(45), _note_title_font_size(35),
-        _grid_string(grid_string) {}
+        _grid_string(grid_string), _margin((Remarkable_margin_width_px)) {}
 
   void SetGridString(std::string grid_string) { _grid_string = grid_string; }
 
@@ -259,7 +262,7 @@ public:
 
     std::string notes_string = "Notes";
     HPDF_REAL notes_section_text_x =
-        GetCenteredTextXPosition(_page, notes_string, 0, notes_divider_x);
+        GetCenteredTextXPosition(_page, notes_string, _margin, notes_divider_x);
     HPDF_Page_BeginText(_page);
     HPDF_Page_MoveTextPos(_page,
                           notes_section_text_x,
@@ -269,8 +272,8 @@ public:
     HPDF_Page_EndText(_page);
 
     HPDF_Page_SetLineWidth(_page, 2);
-    HPDF_Page_MoveTo(_page, 120, 0);
-    HPDF_Page_LineTo(_page, 120, _page_height);
+    HPDF_Page_MoveTo(_page, Remarkable_margin_width_px , 0);
+    HPDF_Page_LineTo(_page, Remarkable_margin_width_px , _page_height);
     HPDF_Page_Stroke(_page);
 
     HPDF_REAL dot_spacing = 40;
@@ -284,7 +287,7 @@ public:
                      dot_spacing,
                      _page_height,
                      _page_width,
-                     120,
+                     Remarkable_margin_width_px ,
                      0,
                      notes_divider_x,
                      _page_height);
@@ -292,7 +295,7 @@ public:
 
     FillAreaWithLines(_page,
                       false,
-                      120,
+                      Remarkable_margin_width_px,
                       (_page_title_font_size * 2) + (_note_title_font_size * 2),
                       notes_divider_x,
                       _page_height - 30,
