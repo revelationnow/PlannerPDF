@@ -88,8 +88,8 @@ public:
     for (HPDF_REAL x = x_start; x < x_stop; x = x + dot_spacing_x) {
       for (HPDF_REAL y = y_start; y < y_stop; y = y + dot_spacing_y) {
         HPDF_Page_SetLineWidth(page, 2);
-        //HPDF_Page_MoveTo(page, x, page_height - y);
-        //HPDF_Page_LineTo(page, x + 1, page_height - y + 1);
+        // HPDF_Page_MoveTo(page, x, page_height - y);
+        // HPDF_Page_LineTo(page, x + 1, page_height - y + 1);
         HPDF_Page_Rectangle(page, x, page_height - y, 1, 1);
         HPDF_Page_Stroke(page);
       }
@@ -319,8 +319,7 @@ public:
                   PlannerTypes object_type,
                   HPDF_REAL page_height,
                   HPDF_REAL padding,
-                  bool grid_string_in_middle
-                  ) {
+                  bool grid_string_in_middle) {
     if ((first_entry_offset + objects.size()) > (num_rows * num_cols)) {
       std::cout << "[ERR] : Too many objects to fit in given grid : num_rows: "
                 << num_rows << ", num_cols : " << num_cols
@@ -353,15 +352,14 @@ public:
                                        objects[object_index]->GetGridString(),
                                        x_pad_start,
                                        x_pad_end);
-          HPDF_REAL grid_y_start =
-              y_pad_start +
-              30;
-          if(true == grid_string_in_middle)
-          {
-            grid_y_start = GetCenteredTextYPosition(page, GetGridString(), grid_y_start, y_pad_end);
+          HPDF_REAL grid_y_start = y_pad_start + 30;
+          if (true == grid_string_in_middle) {
+            grid_y_start = GetCenteredTextYPosition(
+                page, GetGridString(), grid_y_start, y_pad_end);
           }
 
-          HPDF_Page_MoveTextPos(page, grid_x_start, _page_height - grid_y_start);
+          HPDF_Page_MoveTextPos(
+              page, grid_x_start, _page_height - grid_y_start);
 
           if (true == create_annotations) {
             HPDF_Destination dest =

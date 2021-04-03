@@ -77,8 +77,7 @@ public:
                PlannerTypes_Year,
                _page_height,
                10,
-               true
-               );
+               true);
   }
 
   void BuildYears() {

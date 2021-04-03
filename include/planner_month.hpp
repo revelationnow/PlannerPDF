@@ -164,7 +164,8 @@ public:
                         _page_width * _note_section_percentage + 30,
                         (_page_title_font_size * 2),
                         _page_width - 30,
-                        (_page_title_font_size * 2) + (_note_title_font_size * 2),
+                        (_page_title_font_size * 2) +
+                            (_note_title_font_size * 2),
                         false,
                         10,
                         false);
