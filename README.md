@@ -24,6 +24,7 @@ Clone the repository then create a build directory and run cmake followed by mak
     mkdir build
     cd build
     cmake ..
+    make
     ./Planner_PDF
 
 # Usage
