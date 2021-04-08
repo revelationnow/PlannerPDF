@@ -2,6 +2,23 @@
 This will generate a PDF File that can be used as a planner on the remarkable platform.<br>
 It uses the libharu library to generate the PDF and the Date library to perform calendar math.
 
+# Screenshots
+
+The Front index page. Click on the year to go that year's page.
+![Main Page](./screenshots/index_page.png)
+
+The view of all the months and days in a year. The month name is clickable to go a month view and the dates are clickable to go to that day.
+Click on the page title to go back to the main view. Click on the arrow next to the title to go to the next year.
+![Year Page](./screenshots/year_view.png)
+
+The month view, click on a date to go that day's page. Click on the title to go back to the year view and use the arrows to go to previous and next months.
+![Month Page](./screenshots/month_view.png)
+
+The day view. Click on the title to go back to the month view. Use the arrows to navigate to the next and previous page. The next/previous page swipe also works to navigate pages however when swiping next from the last day of a month it will show the next months page.
+![Day Page](./screenshots/day_view.png)
+
+The day view in the left handed version of this document.
+![Day Page Left handed](./screenshots/day_view_left_handed.png)
 # How to compile
 Make sure you have libharu development library installed. Either compiled from source or from your package manager.
 
@@ -55,10 +72,3 @@ To use the PDF copy it to the remarkable device. <br>
 The navigation from child page to parent page is done by clicking on the title page.<br>
 Clicking on the left or right arrows will allow navigation to previous and next pages for days, months or years.
 
-# Screenshots
-
-![Main Page](./screenshots/index_page.png)
-![Year Page](./screenshots/year_view.png)
-![Month Page](./screenshots/month_view.png)
-![Day Page](./screenshots/day_view.png)
-![Day Page Left handed](./screenshots/day_view_left_handed.png)
