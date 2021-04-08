@@ -32,7 +32,7 @@ public:
         _parent_month(parent_month) {
     _page_height = height;
     _page_width = width;
-    _margin = margin;
+    _margin_width = margin;
   }
 
   void Build(HPDF_Doc& doc) {

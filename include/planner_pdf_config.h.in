@@ -34,3 +34,4 @@
 #define Planner_PDF_VERSION_MINOR @Planner_PDF_VERSION_MINOR@
 
 #define Planner_PDF_Start_Day @Planner_PDF_Start_Day@
+#define Planner_PDF_Left_Handed @Planner_PDF_Left_Handed@

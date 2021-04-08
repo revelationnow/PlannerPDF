@@ -34,7 +34,13 @@ protected:
   HPDF_REAL _page_width;
 
   /*! The left margin of the page */
-  HPDF_REAL _margin;
+  HPDF_REAL _margin_width;
+
+  /*! The left margin of the page */
+  HPDF_REAL _margin_left;
+
+  /*! The left margin of the page */
+  HPDF_REAL _margin_right;
 
   /*! A string representing the title of the page */
   std::string _page_title;
@@ -58,16 +64,29 @@ protected:
   /*! A pointer to the right page object */
   std::shared_ptr<PlannerBase> _right;
 
+  /*! Whether it shouold be left handed orientation */
+  bool _is_left_handed;
+
 public:
   PlannerBase()
       : _id(0), _note_section_percentage(0.5), _page_title("Base"),
         _page_title_font_size(45), _note_title_font_size(35),
-        _grid_string("GridBase"), _margin(Remarkable_margin_width_px) {}
+        _grid_string("GridBase"), _margin_width(Remarkable_margin_width_px), _is_left_handed(false),
+        _page_width(Remarkable_width_px), _page_height(Remarkable_height_px)
+  {
+    _margin_left = _margin_width;
+    _margin_right = _page_width - _margin_width;
+  }
 
-  PlannerBase(std::string grid_string)
+  PlannerBase(std::string grid_string, bool is_left_handed)
       : _id(0), _note_section_percentage(0.5), _page_title("Base"),
         _page_title_font_size(45), _note_title_font_size(35),
-        _grid_string(grid_string), _margin((Remarkable_margin_width_px)) {}
+        _grid_string(grid_string), _margin_width((Remarkable_margin_width_px)), _is_left_handed(is_left_handed),
+        _page_width(Remarkable_width_px), _page_height(Remarkable_height_px)
+  {
+    _margin_left = _margin_width;
+    _margin_right = _page_width - _margin_width;
+  }
 
   void SetGridString(std::string grid_string) { _grid_string = grid_string; }
 
@@ -254,51 +273,69 @@ public:
     HPDF_Page_SetFontAndSize(_page, _notes_font, _note_title_font_size);
     HPDF_Page_SetLineWidth(_page, 2);
 
-    HPDF_REAL notes_divider_x = _page_width * _note_section_percentage;
-    HPDF_Page_MoveTo(_page, notes_divider_x, 0);
+    HPDF_REAL notes_divider_x_width;
+    HPDF_REAL notes_section_text_x;
+    HPDF_REAL notes_x_start;
+    HPDF_REAL notes_y_start;
+    HPDF_REAL notes_x_stop;
+    HPDF_REAL notes_y_stop;
+    HPDF_REAL margin_x;
+    HPDF_REAL divider_location_x;
+    std::string notes_string = "Notes";
+
+    notes_divider_x_width = _page_width * _note_section_percentage;
+
+    if(_is_left_handed)
+    {
+      notes_x_start = _page_width - notes_divider_x_width;
+      notes_y_start = 2 * _page_title_font_size;
+      notes_x_stop  = _page_width;
+      notes_y_stop  = _page_height;
+      margin_x      = _margin_right;
+      divider_location_x = notes_x_start;
+      notes_section_text_x =
+        GetCenteredTextXPosition(_page, notes_string, notes_x_start, _margin_right);
+    }
+    else
+    {
+      notes_x_start = 0;
+      notes_y_start = 2 * _page_title_font_size;
+      notes_x_stop  = notes_divider_x_width;
+      notes_y_stop  = _page_height;
+      margin_x      = _margin_left;
+      divider_location_x = notes_x_stop;
+      notes_section_text_x =
+        GetCenteredTextXPosition(_page, notes_string, _margin_left, notes_divider_x_width);
+    }
+
+
+    HPDF_Page_MoveTo(_page, divider_location_x, 0);
     HPDF_Page_LineTo(
-        _page, notes_divider_x, _page_height - (2 * _page_title_font_size));
+        _page, divider_location_x, _page_height - notes_y_start);
     HPDF_Page_Stroke(_page);
 
-    std::string notes_string = "Notes";
-    HPDF_REAL notes_section_text_x =
-        GetCenteredTextXPosition(_page, notes_string, _margin, notes_divider_x);
+
     HPDF_Page_BeginText(_page);
     HPDF_Page_MoveTextPos(_page,
                           notes_section_text_x,
-                          _page_height - (_page_title_font_size * 2) -
+                          _page_height - notes_y_start -
                               _note_title_font_size - 10);
     HPDF_Page_ShowText(_page, notes_string.c_str());
     HPDF_Page_EndText(_page);
 
     HPDF_Page_SetLineWidth(_page, 2);
-    HPDF_Page_MoveTo(_page, Remarkable_margin_width_px , 0);
-    HPDF_Page_LineTo(_page, Remarkable_margin_width_px , _page_height);
+    HPDF_Page_MoveTo(_page, margin_x, 0);
+    HPDF_Page_LineTo(_page, margin_x , _page_height);
     HPDF_Page_Stroke(_page);
 
     HPDF_REAL dot_spacing = 40;
-    /*
-     * @TODO : This increases file size a lot, try replacing with a pattern fill
-     */
-
-#ifdef FILL_NOTES_WITH_DOTS
-    FillAreaWithDots(_page,
-                     dot_spacing,
-                     dot_spacing,
-                     _page_height,
-                     _page_width,
-                     Remarkable_margin_width_px ,
-                     0,
-                     notes_divider_x,
-                     _page_height);
-#endif
 
     FillAreaWithLines(_page,
                       false,
-                      Remarkable_margin_width_px,
-                      (_page_title_font_size * 2) + (_note_title_font_size * 2),
-                      notes_divider_x,
-                      _page_height - 30,
+                      notes_x_start,
+                      notes_y_start + (2 * _note_title_font_size),
+                      notes_x_stop,
+                      notes_y_stop - 30,
                       dot_spacing,
                       _page_height);
   }

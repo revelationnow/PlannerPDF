@@ -113,8 +113,9 @@ int main(int argc, char* argv[]) {
                                                         Remarkable_height_px,
                                                         Remarkable_width_px,
                                                         Remarkable_margin_width_px,
-                                                        Planner_PDF_Start_Day
-                                                        ));
+                                                        Planner_PDF_Start_Day,
+                                                        Planner_PDF_Left_Handed
+        ));
   Test->CreateDocument();
   Test->Build();
   Test->FinishDocument();

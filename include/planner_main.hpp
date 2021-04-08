@@ -27,15 +27,17 @@ public:
               HPDF_REAL height,
               HPDF_REAL width,
               HPDF_REAL margin,
-              short first_day_of_week
+              short first_day_of_week,
+              bool is_left_handed
               )
       : _base_date((date::year)year, (date::month)1, (date::day)1),
         _filename(filename), _num_years(num_years) {
     _page_title = "Planner";
     _page_height = height;
     _page_width = width;
-    _margin = margin;
+    _margin_width = margin;
     _first_day_of_week = first_day_of_week;
+    _is_left_handed = is_left_handed;
   }
 
   static void
@@ -57,8 +59,32 @@ public:
   void CreateYearsSection(HPDF_Doc& doc) {
     std::string year_title_string = "Years";
     HPDF_REAL notes_divider_x = _page_width * _note_section_percentage;
-    HPDF_REAL years_section_text_x = GetCenteredTextXPosition(
-        _page, year_title_string, notes_divider_x, _page_width);
+    HPDF_REAL years_section_text_x;
+    HPDF_REAL section_x_start;
+    HPDF_REAL section_y_start;
+    HPDF_REAL section_x_stop;
+    HPDF_REAL section_y_stop;
+
+
+    if(true == _is_left_handed)
+    {
+      section_x_start = 0;
+      section_y_start = _page_title_font_size * 2;
+      section_x_stop  = notes_divider_x;
+      section_y_stop  = _page_height;
+      years_section_text_x = GetCenteredTextXPosition(
+        _page, year_title_string, section_x_start, section_x_stop);
+    }
+    else
+    {
+      section_x_start = notes_divider_x;
+      section_y_start = _page_title_font_size * 2;
+      section_x_stop  = _page_width;
+      section_y_stop  = _page_height;
+      years_section_text_x = GetCenteredTextXPosition(
+        _page, year_title_string, section_x_start, section_x_stop);
+    }
+
     HPDF_Page_BeginText(_page);
     HPDF_Page_MoveTextPos(_page,
                           years_section_text_x,
@@ -69,10 +95,10 @@ public:
 
     CreateGrid(doc,
                _page,
-               notes_divider_x + 20,
-               (_page_title_font_size * 2) + (_note_title_font_size * 2),
-               _page_width - 20,
-               _page_height,
+               section_x_start + 20,
+               section_y_start + (_note_title_font_size * 2),
+               section_x_stop - 20,
+               section_y_stop,
                _years.size(),
                1,
                _years,
@@ -104,7 +130,7 @@ public:
     for (size_t loop_index = 0; loop_index < _num_years; loop_index++) {
       date::year next_year = _base_date.year() + (date::years)loop_index;
       _years.push_back(std::make_shared<PlannerYear>(PlannerYear(
-          next_year, shared_from_this(), _page_height, _page_width, _margin, _first_day_of_week)));
+          next_year, shared_from_this(), _page_height, _page_width, _margin_width, _first_day_of_week, _is_left_handed)));
       if (loop_index != 0) {
         _years.back()->SetLeft(_years[loop_index - 1]);
         _years[loop_index - 1]->SetRight(_years.back());

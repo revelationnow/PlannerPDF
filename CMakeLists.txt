@@ -31,6 +31,10 @@ if(NOT Planner_PDF_VERSION_MINOR)
   set(Planner_PDF_VERSION_MINOR 0)
 endif()
 
+if(NOT Planner_PDF_Left_Handed)
+  set(Planner_PDF_Left_Handed 0)
+endif()
+
 set(EXEC_NAME Planner_PDF)
 
 # set the project name
@@ -86,11 +90,35 @@ add_custom_target(
   ${PROJECT_SOURCE_DIR}/src/*
   )
 
+set(HANDEDNESS_TEXT "right")
+
+if(${Planner_PDF_Left_Handed} MATCHES 1)
+  set(HANDEDNESS_TEXT "left")
+endif()
+
+set(START_DAY_TEXT "Sunday")
+if(${Planner_PDF_Start_Day} MATCHES 1)
+  set(START_DAY_TEXT "Monday")
+elseif(${Planner_PDF_Start_Day} MATCHES 2)
+  set(START_DAY_TEXT "Tueday")
+elseif(${Planner_PDF_Start_Day} MATCHES 3)
+  set(START_DAY_TEXT "Wednesday")
+elseif(${Planner_PDF_Start_Day} MATCHES 4)
+  set(START_DAY_TEXT "Thursday")
+elseif(${Planner_PDF_Start_Day} MATCHES 5)
+  set(START_DAY_TEXT "Friday")
+elseif(${Planner_PDF_Start_Day} MATCHES 6)
+  set(START_DAY_TEXT "Saturday")
+endif()
+
+set(SAMPLE_FILE_TAG "${START_YEAR}_${NUM_YEARS}year_${START_DAY_TEXT}_start_${HANDEDNESS_TEXT}_handed_v${Planner_PDF_VERSION_MAJOR}_${Planner_PDF_VERSION_MINOR}"
+  )
+
 add_custom_target(
   update_samples
   COMMAND cp
   ${PDF_FILENAME}.pdf
-  '../samples/${PDF_FILENAME}_${NUM_YEARS}_year.pdf'
+  '../samples/${PDF_FILENAME}_${SAMPLE_FILE_TAG}.pdf'
   DEPENDS create
   )
 
@@ -98,7 +126,7 @@ add_custom_target(
   update_compressed_samples
   COMMAND ${CMAKE_COMMAND} -E copy
   ${COMPRESSED_FILE}.pdf
-  ../samples/${COMPRESSED_FILE}_${NUM_YEARS}_year.pdf
+  '../samples/${COMPRESSED_FILE}_${SAMPLE_FILE_TAG}.pdf'
   DEPENDS compress
   )
 

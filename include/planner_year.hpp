@@ -25,7 +25,8 @@ public:
               HPDF_REAL height,
               HPDF_REAL width,
               HPDF_REAL margin,
-              short first_day_of_week
+              short first_day_of_week,
+              bool is_left_handed
               )
       : _year(year) {
     _page_title = format("%Y", _year);
@@ -34,8 +35,9 @@ public:
     _page_width = width;
     _note_section_percentage = 0.25;
     _parent = parent_main;
-    _margin = margin;
+    _margin_width = margin;
     _first_day_of_week = first_day_of_week;
+    _is_left_handed = is_left_handed;
   }
 
   PlannerYear(short year) : _year((date::year)year) {}
@@ -43,12 +45,36 @@ public:
   date::year GetYear() { return _year; }
 
   void AddMonthsSection(HPDF_Doc& doc) {
+
+    HPDF_REAL notes_divider_x = _page_width * _note_section_percentage;
+    HPDF_REAL section_x_start;
+    HPDF_REAL section_y_start;
+    HPDF_REAL section_x_stop;
+    HPDF_REAL section_y_stop;
+
+
+    if(true == _is_left_handed)
+    {
+      section_x_start = 0;
+      section_y_start = _page_title_font_size * 2;
+      section_x_stop  = _page_width - notes_divider_x;
+      section_y_stop  = _page_height;
+    }
+    else
+    {
+      section_x_start = notes_divider_x;
+      section_y_start = _page_title_font_size * 2;
+      section_x_stop  = _page_width;
+      section_y_stop  = _page_height;
+    }
+
+
     CreateGrid(doc,
                _page,
-               _page_width * _note_section_percentage + 15,
-               95,
-               _page_width - 15,
-               _page_height - 45,
+               section_x_start + 15,
+               section_y_start + 5,
+               section_x_stop - 15,
+               section_y_stop - 45,
                3,
                4,
                _months,
@@ -86,8 +112,9 @@ public:
                        shared_from_this(),
                        _page_height,
                        _page_width,
-                       _margin,
-                       _first_day_of_week
+                       _margin_width,
+                       _first_day_of_week,
+                       _is_left_handed
                        )));
 
       std::shared_ptr<PlannerBase> prev_month;

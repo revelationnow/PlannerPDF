@@ -28,7 +28,8 @@ public:
                HPDF_REAL height,
                HPDF_REAL width,
                HPDF_REAL margin,
-               short first_day_of_week
+               short first_day_of_week,
+               bool is_left_handed
                )
       : _month(month) {
     _page_title = format("%b %Y", _month);
@@ -38,6 +39,7 @@ public:
     _note_section_percentage = 0.25;
     _parent = parent_year;
     _first_day_of_week = first_day_of_week;
+    _is_left_handed = is_left_handed;
   }
 
   std::vector<std::shared_ptr<PlannerBase>>& GetDays() { return _days; }
@@ -66,7 +68,8 @@ public:
                                                   _page_width,
                                                   day_page_title,
                                                   day_grid_title,
-                                                  _margin
+                                                  _margin_width,
+                                                  _is_left_handed
                                                   )));
 
       std::shared_ptr<PlannerBase> prev_day;
@@ -113,7 +116,7 @@ public:
         weekday_name = weekday_name.substr(0, 1);
       }
       weekdays.push_back(
-          std::make_shared<PlannerBase>(PlannerBase(weekday_name)));
+          std::make_shared<PlannerBase>(PlannerBase(weekday_name, _is_left_handed)));
     }
 
     CreateGrid(doc,
@@ -167,22 +170,42 @@ public:
   }
 
   void CreateDaysSection(HPDF_Doc& doc) {
+    HPDF_REAL notes_divider_x = _page_width * _note_section_percentage;
+    HPDF_REAL section_x_start;
+    HPDF_REAL section_y_start;
+    HPDF_REAL section_x_stop;
+    HPDF_REAL section_y_stop;
+
+
+    if(true == _is_left_handed)
+    {
+      section_x_start = 0;
+      section_y_start = _page_title_font_size * 2;
+      section_x_stop  = _page_width - notes_divider_x;
+      section_y_stop  = _page_height;
+    }
+    else
+    {
+      section_x_start = notes_divider_x;
+      section_y_start = _page_title_font_size * 2;
+      section_x_stop  = _page_width;
+      section_y_stop  = _page_height;
+    }
     CreateWeekdayHeader(doc,
                         _page,
-                        _page_width * _note_section_percentage + 30,
-                        (_page_title_font_size * 2),
-                        _page_width - 30,
-                        (_page_title_font_size * 2) +
-                            (_note_title_font_size * 2),
+                        section_x_start + 30,
+                        section_y_start,
+                        section_x_stop - 30,
+                        section_y_start + (_note_title_font_size * 2),
                         false,
                         10,
                         false);
     AddDaysSection(doc,
                    _page,
-                   _page_width * _note_section_percentage + 30,
-                   150,
-                   _page_width - 30,
-                   _page_height - 105,
+                   section_x_start + 30,
+                   section_y_start + (_note_title_font_size * 2),
+                   section_x_stop - 30,
+                   section_y_stop - 105,
                    false,
                    10);
   }
