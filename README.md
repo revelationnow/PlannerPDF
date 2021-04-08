@@ -54,3 +54,11 @@ There is additionally a make target to update the samples in the samples directo
 To use the PDF copy it to the remarkable device. <br>
 The navigation from child page to parent page is done by clicking on the title page.<br>
 Clicking on the left or right arrows will allow navigation to previous and next pages for days, months or years.
+
+# Screenshots
+
+![Main Page](./screenshots/index_page.png)
+![Year Page](./screenshots/year_view.png)
+![Month Page](./screenshots/month_view.png)
+![Day Page](./screenshots/day_view.png)
+![Day Page Left handed](./screenshots/day_view_left_handed.png)
