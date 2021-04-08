@@ -30,5 +30,7 @@
 // evolution). We did not mean to shout.
 
 // the configured options and settings for Tutorial
-#define Planner_PDF_VERSION_MAJOR @Planner_PDF_VERSION_MAJOR @
-#define Planner_PDF_VERSION_MINOR @Planner_PDF_VERSION_MINOR @
+#define Planner_PDF_VERSION_MAJOR @Planner_PDF_VERSION_MAJOR@
+#define Planner_PDF_VERSION_MINOR @Planner_PDF_VERSION_MINOR@
+
+#define Planner_PDF_Start_Day @Planner_PDF_Start_Day@

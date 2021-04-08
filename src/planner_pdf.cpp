@@ -30,6 +30,7 @@
 // evolution). We did not mean to shout.
 
 #include "planner_main.hpp"
+#include "planner_pdf_config.h"
 #include "utils.hpp"
 #include <cstdint>
 #include <iostream>
@@ -111,7 +112,8 @@ int main(int argc, char* argv[]) {
                                                         num_years,
                                                         Remarkable_height_px,
                                                         Remarkable_width_px,
-                                                        Remarkable_margin_width_px
+                                                        Remarkable_margin_width_px,
+                                                        Planner_PDF_Start_Day
                                                         ));
   Test->CreateDocument();
   Test->Build();

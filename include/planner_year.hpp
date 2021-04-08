@@ -9,6 +9,7 @@
 class PlannerYear : public PlannerBase {
   date::year _year;
   std::vector<std::shared_ptr<PlannerBase>> _months;
+  short _first_day_of_week;
 
 public:
   PlannerYear() : _year((date::year)2021) {
@@ -23,7 +24,8 @@ public:
               std::shared_ptr<PlannerBase> parent_main,
               HPDF_REAL height,
               HPDF_REAL width,
-              HPDF_REAL margin
+              HPDF_REAL margin,
+              short first_day_of_week
               )
       : _year(year) {
     _page_title = format("%Y", _year);
@@ -33,6 +35,7 @@ public:
     _note_section_percentage = 0.25;
     _parent = parent_main;
     _margin = margin;
+    _first_day_of_week = first_day_of_week;
   }
 
   PlannerYear(short year) : _year((date::year)year) {}
@@ -83,7 +86,8 @@ public:
                        shared_from_this(),
                        _page_height,
                        _page_width,
-                       _margin
+                       _margin,
+                       _first_day_of_week
                        )));
 
       std::shared_ptr<PlannerBase> prev_month;

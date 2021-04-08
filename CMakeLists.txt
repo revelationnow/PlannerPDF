@@ -16,6 +16,21 @@ if(NOT COMPRESSED_FILE)
   set(COMPRESSED_FILE ${PDF_FILENAME}_compressed)
 endif()
 
+if(NOT Planner_PDF_Start_Day)
+  set(Planner_PDF_Start_Day 0)
+elseif( ${Planner_PDF_Start_Day} GREATER 6)
+  message("Start day parameter exceeds 6, make sure to set it to something less. 0 : Sunday, 1 : Monday, 2 : Tuesday, 3 : Wednesday, 4 : Thursday, 5: Friday, 6 : Saturday")
+  set(Planner_PDF_Start_Day 0)
+endif()
+
+if(NOT Planner_PDF_VERSION_MAJOR)
+  set(Planner_PDF_VERSION_MAJOR 1)
+endif()
+
+if(NOT Planner_PDF_VERSION_MINOR)
+  set(Planner_PDF_VERSION_MINOR 0)
+endif()
+
 set(EXEC_NAME Planner_PDF)
 
 # set the project name
