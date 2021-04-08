@@ -8,6 +8,7 @@
  */
 class PlannerMonth : public PlannerBase {
   date::year_month _month;
+  short _first_day_of_week;
 
   std::vector<std::shared_ptr<PlannerBase>> _weeks;
   std::vector<std::shared_ptr<PlannerBase>> _days;
@@ -26,7 +27,8 @@ public:
                std::shared_ptr<PlannerBase> parent_year,
                HPDF_REAL height,
                HPDF_REAL width,
-               HPDF_REAL margin
+               HPDF_REAL margin,
+               short first_day_of_week
                )
       : _month(month) {
     _page_title = format("%b %Y", _month);
@@ -35,6 +37,7 @@ public:
     _page_width = width;
     _note_section_percentage = 0.25;
     _parent = parent_year;
+    _first_day_of_week = first_day_of_week;
   }
 
   std::vector<std::shared_ptr<PlannerBase>>& GetDays() { return _days; }
@@ -104,7 +107,7 @@ public:
     std::vector<std::shared_ptr<PlannerBase>> weekdays;
     date::weekday weekday;
     for (size_t i = 0; i < 7; i++) {
-      weekday = (date::weekday)i;
+      weekday = (date::weekday)((i + _first_day_of_week) % 7);
       std::string weekday_name = format("%a", weekday);
       if (true == first_letter_only) {
         weekday_name = weekday_name.substr(0, 1);
@@ -143,6 +146,7 @@ public:
 
     date::year_month_day first_day =
         date::year(_month.year()) / _month.month() / 1;
+
     CreateGrid(doc,
                page,
                x_start,
@@ -153,7 +157,7 @@ public:
                7,
                _days,
                true,
-               date::weekday{first_day}.c_encoding(),
+               (date::weekday{first_day}.c_encoding() - _first_day_of_week + 7) % 7,
                create_thumbnail,
                PlannerTypes_Month,
                PlannerTypes_Day,
