@@ -19,6 +19,22 @@ The day view. Click on the title to go back to the month view. Use the arrows to
 
 The day view in the left handed version of this document.
 ![Day Page Left handed](./screenshots/day_view_left_handed.png)
+
+# Available Samples
+8 different sample files are available in the samples directory incase you do not wish to compile and generate the file yourself.
+Each sample file has an original file and compressed version which is smaller in size but maintains most of the fidelity of the original.
+The different files are labeled according to their differences.
+
+Below is a summary of a few of the files.
+
+                        FILE NAME                         |                  DESCRIPTION
+    ______________________________________________________|_____________________________________________________________________________________________
+    calendar_2021_1year_Monday_start_left_handed_v1_0.pdf | Start year is 2021. It is a one year planner with days starting on Monday and is left handed
+    calendar_2021_5year_Monday_start_left_handed_v1_0.pdf | Start year is 2021. It is a five year planner with days starting on Monday and is left handed
+    calendar_2021_5year_Sunday_start_right_handed_v1_0.pdf| Start year is 2021. It is a five year planner with days starting on Sunday and is right handed
+
+
+
 # How to compile
 Make sure you have libharu development library installed. Either compiled from source or from your package manager.
 
