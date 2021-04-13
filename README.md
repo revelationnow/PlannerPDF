@@ -1,4 +1,6 @@
 # Planner PDF
+![Build Status](https://github.com/revelationnow/PlannerPDF/actions/workflows/cmake.yml/badge.svg)
+
 This will generate a PDF File that can be used as a planner on the remarkable platform.<br>
 It uses the libharu library to generate the PDF and the Date library to perform calendar math.
 
