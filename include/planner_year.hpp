@@ -56,18 +56,21 @@ public:
               HPDF_REAL width,
               HPDF_REAL margin,
               short first_day_of_week,
-              bool is_left_handed
+              bool is_left_handed,
+              bool is_portrait
               )
       : _year(year) {
     _page_title = format("%Y", _year);
     _grid_string = format("%Y", _year);
     _page_height = height;
     _page_width = width;
-    _note_section_percentage = 0.25;
+//    _note_section_percentage = 0.25;
+    _note_section_percentage = is_portrait?0.085:0.25;
     _parent = parent_main;
     _margin_width = margin;
     _first_day_of_week = first_day_of_week;
     _is_left_handed = is_left_handed;
+    _is_portrait = is_portrait;
   }
 
   PlannerYear(short year) : _year((date::year)year) {}
@@ -105,8 +108,8 @@ public:
                section_y_start + 5,
                section_x_stop - 15,
                section_y_stop - 45,
-               3,
-               4,
+               _is_portrait?4:3,
+               _is_portrait?3:4,
                _months,
                true,
                0,
@@ -144,7 +147,8 @@ public:
                        _page_width,
                        _margin_width,
                        _first_day_of_week,
-                       _is_left_handed
+                       _is_left_handed,
+                       _is_portrait
                        )));
 
       std::shared_ptr<PlannerBase> prev_month;

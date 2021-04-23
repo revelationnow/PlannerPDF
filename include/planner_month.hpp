@@ -59,17 +59,20 @@ public:
                HPDF_REAL width,
                HPDF_REAL margin,
                short first_day_of_week,
-               bool is_left_handed
+               bool is_left_handed,
+               bool is_portrait
                )
       : _month(month) {
     _page_title = format("%b %Y", _month);
     _grid_string = format("%b", _month);
     _page_height = height;
     _page_width = width;
-    _note_section_percentage = 0.25;
+//    _note_section_percentage = 0.25;
+    _note_section_percentage = is_portrait?0.085:0.25;
     _parent = parent_year;
     _first_day_of_week = first_day_of_week;
     _is_left_handed = is_left_handed;
+    _is_portrait = is_portrait;
   }
 
   std::vector<std::shared_ptr<PlannerBase>>& GetDays() { return _days; }
@@ -99,7 +102,8 @@ public:
                                                   day_page_title,
                                                   day_grid_title,
                                                   _margin_width,
-                                                  _is_left_handed
+                                                  _is_left_handed,
+                                                  _is_portrait
                                                   )));
 
       std::shared_ptr<PlannerBase> prev_day;

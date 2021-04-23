@@ -58,7 +58,8 @@ public:
               HPDF_REAL width,
               HPDF_REAL margin,
               short first_day_of_week,
-              bool is_left_handed
+              bool is_left_handed,
+              bool is_portrait
               )
       : _base_date((date::year)year, (date::month)1, (date::day)1),
         _filename(filename), _num_years(num_years) {
@@ -68,6 +69,7 @@ public:
     _margin_width = margin;
     _first_day_of_week = first_day_of_week;
     _is_left_handed = is_left_handed;
+    _is_portrait = is_portrait;
   }
 
   static void
@@ -160,7 +162,7 @@ public:
     for (size_t loop_index = 0; loop_index < _num_years; loop_index++) {
       date::year next_year = _base_date.year() + (date::years)loop_index;
       _years.push_back(std::make_shared<PlannerYear>(PlannerYear(
-          next_year, shared_from_this(), _page_height, _page_width, _margin_width, _first_day_of_week, _is_left_handed)));
+          next_year, shared_from_this(), _page_height, _page_width, _margin_width, _first_day_of_week, _is_left_handed, _is_portrait)));
       if (loop_index != 0) {
         _years.back()->SetLeft(_years[loop_index - 1]);
         _years[loop_index - 1]->SetRight(_years.back());

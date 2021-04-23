@@ -35,6 +35,10 @@ if(NOT Planner_PDF_Left_Handed)
   set(Planner_PDF_Left_Handed 0)
 endif()
 
+if(NOT Planner_PDF_Portrait)
+  set(Planner_PDF_Portrait 0)
+endif()
+
 set(EXEC_NAME Planner_PDF)
 
 # set the project name

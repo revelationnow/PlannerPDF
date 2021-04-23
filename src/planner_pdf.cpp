@@ -110,11 +110,12 @@ int main(int argc, char* argv[]) {
   auto Test = std::make_shared<PlannerMain>(PlannerMain(start_year,
                                                         filename,
                                                         num_years,
-                                                        Remarkable_height_px,
-                                                        Remarkable_width_px,
+                                                        Planner_PDF_Portrait?Remarkable_width_px:Remarkable_height_px,
+                                                        Planner_PDF_Portrait?Remarkable_height_px:Remarkable_width_px,
                                                         Remarkable_margin_width_px,
                                                         Planner_PDF_Start_Day,
-                                                        Planner_PDF_Left_Handed
+                                                        Planner_PDF_Left_Handed,
+                                                        Planner_PDF_Portrait
         ));
   Test->CreateDocument();
   Test->Build();
