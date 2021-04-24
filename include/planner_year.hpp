@@ -170,7 +170,10 @@ public:
     BuildMonths(doc);
     AddMonthsSection(doc);
     CreateTitle();
-    CreateNotesSection();
+    if(false == _is_portrait)
+    {
+      CreateNotesSection();
+    }
   }
 };
 #endif // PLANNER_YEAR_HPP

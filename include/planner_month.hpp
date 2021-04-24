@@ -275,7 +275,10 @@ public:
     AddDays();
     BuildDays(doc);
     CreateDaysSection(doc);
-    CreateNotesSection();
+    if(false == _is_portrait)
+    {
+      CreateNotesSection();
+    }
   }
 };
 #endif // PLANNER_MONTH_HPP
