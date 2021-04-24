@@ -120,14 +120,14 @@ if(${Planner_PDF_Portrait} MATCHES 1)
   set(PORTRAIT_TEXT "Portrait")
 endif()
 
-set(SAMPLE_FILE_TAG "${START_YEAR}_${NUM_YEARS}year_${START_DAY_TEXT}_start_${HANDEDNESS_TEXT}_handed_${Planner_PDF_Portrait}_v${Planner_PDF_VERSION_MAJOR}_${Planner_PDF_VERSION_MINOR}"
+set(SAMPLE_FILE_TAG "${START_YEAR}_${NUM_YEARS}year_${START_DAY_TEXT}_start_${HANDEDNESS_TEXT}_handed_${PORTRAIT_TEXT}_v${Planner_PDF_VERSION_MAJOR}_${Planner_PDF_VERSION_MINOR}"
   )
 
 add_custom_target(
   update_samples
-  COMMAND cp
+  COMMAND ${CMAKE_COMMAND} -E copy
   ${PDF_FILENAME}.pdf
-  '../samples/${PDF_FILENAME}_${SAMPLE_FILE_TAG}.pdf'
+  '../samples/${HANDEDNESS_TEXT}_handed/${PORTRAIT_TEXT}/${START_DAY_TEXT}_start/v${Planner_PDF_VERSION_MAJOR}_${Planner_PDF_VERSION_MINOR}/${PDF_FILENAME}_${SAMPLE_FILE_TAG}.pdf'
   DEPENDS create
   )
 
@@ -135,7 +135,7 @@ add_custom_target(
   update_compressed_samples
   COMMAND ${CMAKE_COMMAND} -E copy
   ${COMPRESSED_FILE}.pdf
-  '../samples/${COMPRESSED_FILE}_${SAMPLE_FILE_TAG}.pdf'
+  '../samples/${HANDEDNESS_TEXT}_handed/${PORTRAIT_TEXT}/${START_DAY_TEXT}_start/v${Planner_PDF_VERSION_MAJOR}_${Planner_PDF_VERSION_MINOR}/${COMPRESSED_FILE}_${SAMPLE_FILE_TAG}.pdf'
   DEPENDS compress
   )
 
