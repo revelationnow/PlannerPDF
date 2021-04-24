@@ -58,7 +58,8 @@ public:
              std::string page_title,
              std::string grid_string,
              HPDF_REAL margin,
-             bool is_left_handed
+             bool is_left_handed,
+             bool is_portrait
              )
       : _day((date::year_month_day){
             (date::year)year, (date::month)month, (date::day)day}) {
@@ -69,6 +70,7 @@ public:
     _parent = parent_month;
     _margin_width = margin;
     _is_left_handed = is_left_handed;
+    _is_portrait = is_portrait;
   }
 
   void CreateTasksSection(HPDF_Doc& doc) {

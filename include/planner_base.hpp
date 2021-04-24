@@ -97,12 +97,15 @@ protected:
   /*! Whether it shouold be left handed orientation */
   bool _is_left_handed;
 
+  /*! Whether it should be portrait / landscape orientation */
+  bool _is_portrait;
+
 public:
   PlannerBase()
       : _id(0), _note_section_percentage(0.5), _page_title("Base"),
         _page_title_font_size(45), _note_title_font_size(35),
         _grid_string("GridBase"), _margin_width(Remarkable_margin_width_px), _is_left_handed(false),
-        _page_width(Remarkable_width_px), _page_height(Remarkable_height_px)
+        _page_width(Remarkable_width_px), _page_height(Remarkable_height_px), _is_portrait(false)
   {
     _margin_left = _margin_width;
     _margin_right = _page_width - _margin_width;
@@ -112,7 +115,7 @@ public:
       : _id(0), _note_section_percentage(0.5), _page_title("Base"),
         _page_title_font_size(45), _note_title_font_size(35),
         _grid_string(grid_string), _margin_width((Remarkable_margin_width_px)), _is_left_handed(is_left_handed),
-        _page_width(Remarkable_width_px), _page_height(Remarkable_height_px)
+        _page_width(Remarkable_width_px), _page_height(Remarkable_height_px), _is_portrait(false)
   {
     _margin_left = _margin_width;
     _margin_right = _page_width - _margin_width;
@@ -137,15 +140,19 @@ public:
                         HPDF_REAL x_stop,
                         HPDF_REAL y_stop) {
 
-    for (HPDF_REAL x = x_start; x < x_stop; x = x + dot_spacing_x) {
+//    for (HPDF_REAL x = x_start; x < x_stop; x = x + dot_spacing_x) {
+      HPDF_REAL x = x_start ;
+      const HPDF_UINT16 DASH_MODE1[] = {2, HPDF_UINT16(dot_spacing_x)};
+
       for (HPDF_REAL y = y_start; y < y_stop; y = y + dot_spacing_y) {
         HPDF_Page_SetLineWidth(page, 2);
-        // HPDF_Page_MoveTo(page, x, page_height - y);
-        // HPDF_Page_LineTo(page, x + 1, page_height - y + 1);
+        HPDF_Page_SetDash(page, DASH_MODE1, 2, 0);
+        HPDF_Page_MoveTo(page, x, page_height - y);
+        HPDF_Page_LineTo(page, x_stop, page_height - y);
         HPDF_Page_Rectangle(page, x, page_height - y, 1, 1);
         HPDF_Page_Stroke(page);
       }
-    }
+//    }
   }
 
   void FillAreaWithLines(HPDF_Page& page,

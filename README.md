@@ -71,6 +71,8 @@ The `make create` command will generate a file called planner.pdf in the build d
     COMPRESSED_FILE                        | planner_compressed  | The filename of a compressed version of the file
     Planner_PDF_Start_Day                  | 0                   | This allows moving the start day of the month view to a day other than Sunday
                                            |                     | 0 : Sun, 1 : Mon, 2 : Tue, 3 : Wed, 4 : Thu, 5 : Fri, 6 : Sat
+    Planner_PDF_Portrait                   | 0                   | 0 : Landscape, 1 : Portrait
+
 
 There is a make target called `make compress` which will us ghostscript to try to reduce the filesize. For the 5 year planner it can bring the size down from ~43mb to ~19mb.
 
