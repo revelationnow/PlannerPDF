@@ -90,7 +90,7 @@ add_custom_target(
   COMMAND clang-format
   -style=file
   -i
-  ${PROJECT_SOURCE_DIR}/include/*
+  ${PROJECT_SOURCE_DIR}/include/*.hpp
   ${PROJECT_SOURCE_DIR}/src/*
   )
 
