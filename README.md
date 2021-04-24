@@ -22,7 +22,7 @@ The day view. Click on the title to go back to the month view. Use the arrows to
 The day view in the left handed version of this document.
 ![Day Page Left handed](./screenshots/day_view_left_handed.png)
 
-The year view in left handed portraot mode.
+The year view in left handed portrait mode.
 ![Year_Page_Portrait_Left_handed](./screenshots/portrait_left_handed_year.png)
 
 # Available Samples
