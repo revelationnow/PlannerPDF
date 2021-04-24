@@ -104,9 +104,9 @@ public:
   PlannerBase()
       : _id(0), _note_section_percentage(0.5), _page_title("Base"),
         _page_title_font_size(45), _note_title_font_size(35),
-        _grid_string("GridBase"), _margin_width(Remarkable_margin_width_px), _is_left_handed(false),
-        _page_width(Remarkable_width_px), _page_height(Remarkable_height_px), _is_portrait(false)
-  {
+        _grid_string("GridBase"), _margin_width(Remarkable_margin_width_px),
+        _is_left_handed(false), _page_width(Remarkable_width_px),
+        _page_height(Remarkable_height_px), _is_portrait(false) {
     _margin_left = _margin_width;
     _margin_right = _page_width - _margin_width;
   }
@@ -114,9 +114,9 @@ public:
   PlannerBase(std::string grid_string, bool is_left_handed)
       : _id(0), _note_section_percentage(0.5), _page_title("Base"),
         _page_title_font_size(45), _note_title_font_size(35),
-        _grid_string(grid_string), _margin_width((Remarkable_margin_width_px)), _is_left_handed(is_left_handed),
-        _page_width(Remarkable_width_px), _page_height(Remarkable_height_px), _is_portrait(false)
-  {
+        _grid_string(grid_string), _margin_width((Remarkable_margin_width_px)),
+        _is_left_handed(is_left_handed), _page_width(Remarkable_width_px),
+        _page_height(Remarkable_height_px), _is_portrait(false) {
     _margin_left = _margin_width;
     _margin_right = _page_width - _margin_width;
   }
@@ -140,19 +140,16 @@ public:
                         HPDF_REAL x_stop,
                         HPDF_REAL y_stop) {
 
-//    for (HPDF_REAL x = x_start; x < x_stop; x = x + dot_spacing_x) {
-      HPDF_REAL x = x_start ;
-      const HPDF_UINT16 DASH_MODE1[] = {2, HPDF_UINT16(dot_spacing_x)};
+    HPDF_REAL x = x_start;
+    const HPDF_UINT16 DASH_MODE1[] = {2, HPDF_UINT16(dot_spacing_x)};
 
-      for (HPDF_REAL y = y_start; y < y_stop; y = y + dot_spacing_y) {
-        HPDF_Page_SetLineWidth(page, 2);
-        HPDF_Page_SetDash(page, DASH_MODE1, 2, 0);
-        HPDF_Page_MoveTo(page, x, page_height - y);
-        HPDF_Page_LineTo(page, x_stop, page_height - y);
-        HPDF_Page_Rectangle(page, x, page_height - y, 1, 1);
-        HPDF_Page_Stroke(page);
-      }
-//    }
+    for (HPDF_REAL y = y_start; y < y_stop; y = y + dot_spacing_y) {
+      HPDF_Page_SetLineWidth(page, 2);
+      HPDF_Page_SetDash(page, DASH_MODE1, 2, 0);
+      HPDF_Page_MoveTo(page, x, page_height - y);
+      HPDF_Page_LineTo(page, x_stop, page_height - y);
+      HPDF_Page_Stroke(page);
+    }
   }
 
   void FillAreaWithLines(HPDF_Page& page,
@@ -199,6 +196,17 @@ public:
     _page_height = height;
     HPDF_Page_SetWidth(_page, width);
     _page_width = width;
+    /* Draw the margin */
+    HPDF_REAL margin_x;
+    if (_is_left_handed) {
+      margin_x = _margin_right;
+    } else {
+      margin_x = _margin_left;
+    }
+    HPDF_Page_SetLineWidth(_page, 1);
+    HPDF_Page_MoveTo(_page, margin_x, 0);
+    HPDF_Page_LineTo(_page, margin_x, _page_height);
+    HPDF_Page_Stroke(_page);
   }
 
   /*!
@@ -322,48 +330,39 @@ public:
 
     notes_divider_x_width = _page_width * _note_section_percentage;
 
-    if(_is_left_handed)
-    {
+    if (_is_left_handed) {
       notes_x_start = _page_width - notes_divider_x_width;
       notes_y_start = 2 * _page_title_font_size;
-      notes_x_stop  = _page_width;
-      notes_y_stop  = _page_height;
-      margin_x      = _margin_right;
+      notes_x_stop = _page_width;
+      notes_y_stop = _page_height;
+      margin_x = _margin_right;
       divider_location_x = notes_x_start;
-      notes_section_text_x =
-        GetCenteredTextXPosition(_page, notes_string, notes_x_start, _margin_right);
-    }
-    else
-    {
+      notes_section_text_x = GetCenteredTextXPosition(
+          _page, notes_string, notes_x_start, _margin_right);
+    } else {
       notes_x_start = 0;
       notes_y_start = 2 * _page_title_font_size;
-      notes_x_stop  = notes_divider_x_width;
-      notes_y_stop  = _page_height;
-      margin_x      = _margin_left;
+      notes_x_stop = notes_divider_x_width;
+      notes_y_stop = _page_height;
+      margin_x = _margin_left;
       divider_location_x = notes_x_stop;
-      notes_section_text_x =
-        GetCenteredTextXPosition(_page, notes_string, _margin_left, notes_divider_x_width);
+      notes_section_text_x = GetCenteredTextXPosition(
+          _page, notes_string, _margin_left, notes_divider_x_width);
     }
 
-
+    /* Draw dividing line between notes section and the rest of the page */
     HPDF_Page_MoveTo(_page, divider_location_x, 0);
-    HPDF_Page_LineTo(
-        _page, divider_location_x, _page_height - notes_y_start);
+    HPDF_Page_LineTo(_page, divider_location_x, _page_height - notes_y_start);
     HPDF_Page_Stroke(_page);
 
-
+    /* Print Notes section title */
     HPDF_Page_BeginText(_page);
     HPDF_Page_MoveTextPos(_page,
                           notes_section_text_x,
-                          _page_height - notes_y_start -
-                              _note_title_font_size - 10);
+                          _page_height - notes_y_start - _note_title_font_size -
+                              10);
     HPDF_Page_ShowText(_page, notes_string.c_str());
     HPDF_Page_EndText(_page);
-
-    HPDF_Page_SetLineWidth(_page, 2);
-    HPDF_Page_MoveTo(_page, margin_x, 0);
-    HPDF_Page_LineTo(_page, margin_x , _page_height);
-    HPDF_Page_Stroke(_page);
 
     HPDF_REAL dot_spacing = 40;
 

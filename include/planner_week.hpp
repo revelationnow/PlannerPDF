@@ -63,6 +63,8 @@ public:
     _page_height = height;
     _page_width = width;
     _margin_width = margin;
+    _margin_left = _margin_width;
+    _margin_right = _page_width - _margin_width;
   }
 
   void Build(HPDF_Doc& doc) {

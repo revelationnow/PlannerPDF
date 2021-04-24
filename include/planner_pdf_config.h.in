@@ -30,10 +30,10 @@
 // evolution). We did not mean to shout.
 
 // the configured options and settings for Tutorial
-#define Planner_PDF_VERSION_MAJOR @Planner_PDF_VERSION_MAJOR@
-#define Planner_PDF_VERSION_MINOR @Planner_PDF_VERSION_MINOR@
+#define Planner_PDF_VERSION_MAJOR @Planner_PDF_VERSION_MAJOR @
+#define Planner_PDF_VERSION_MINOR @Planner_PDF_VERSION_MINOR @
 
-#define Planner_PDF_Start_Day @Planner_PDF_Start_Day@
-#define Planner_PDF_Left_Handed @Planner_PDF_Left_Handed@
+#define Planner_PDF_Start_Day @Planner_PDF_Start_Day @
+#define Planner_PDF_Left_Handed @Planner_PDF_Left_Handed @
 
-#define Planner_PDF_Portrait @Planner_PDF_Portrait@
+#define Planner_PDF_Portrait @Planner_PDF_Portrait @
