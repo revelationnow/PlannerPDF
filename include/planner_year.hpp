@@ -57,17 +57,17 @@ public:
               HPDF_REAL margin,
               short first_day_of_week,
               bool is_left_handed,
-              bool is_portrait
-              )
+              bool is_portrait)
       : _year(year) {
     _page_title = format("%Y", _year);
     _grid_string = format("%Y", _year);
     _page_height = height;
     _page_width = width;
-//    _note_section_percentage = 0.25;
-    _note_section_percentage = is_portrait?0.085:0.25;
+    _note_section_percentage = is_portrait ? 0.085 : 0.25;
     _parent = parent_main;
     _margin_width = margin;
+    _margin_left = _margin_width;
+    _margin_right = _page_width - _margin_width;
     _first_day_of_week = first_day_of_week;
     _is_left_handed = is_left_handed;
     _is_portrait = is_portrait;
@@ -85,22 +85,17 @@ public:
     HPDF_REAL section_x_stop;
     HPDF_REAL section_y_stop;
 
-
-    if(true == _is_left_handed)
-    {
+    if (true == _is_left_handed) {
       section_x_start = 0;
       section_y_start = _page_title_font_size * 2;
-      section_x_stop  = _page_width - notes_divider_x;
-      section_y_stop  = _page_height;
-    }
-    else
-    {
+      section_x_stop = _page_width - notes_divider_x;
+      section_y_stop = _page_height;
+    } else {
       section_x_start = notes_divider_x;
       section_y_start = _page_title_font_size * 2;
-      section_x_stop  = _page_width;
-      section_y_stop  = _page_height;
+      section_x_stop = _page_width;
+      section_y_stop = _page_height;
     }
-
 
     CreateGrid(doc,
                _page,
@@ -108,8 +103,8 @@ public:
                section_y_start + 5,
                section_x_stop - 15,
                section_y_stop - 45,
-               _is_portrait?4:3,
-               _is_portrait?3:4,
+               _is_portrait ? 4 : 3,
+               _is_portrait ? 3 : 4,
                _months,
                true,
                0,
@@ -148,8 +143,7 @@ public:
                        _margin_width,
                        _first_day_of_week,
                        _is_left_handed,
-                       _is_portrait
-                       )));
+                       _is_portrait)));
 
       std::shared_ptr<PlannerBase> prev_month;
 
@@ -170,7 +164,9 @@ public:
     BuildMonths(doc);
     AddMonthsSection(doc);
     CreateTitle();
-    CreateNotesSection();
+    if (false == _is_portrait) {
+      CreateNotesSection();
+    }
   }
 };
 #endif // PLANNER_YEAR_HPP

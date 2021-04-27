@@ -60,19 +60,21 @@ public:
                HPDF_REAL margin,
                short first_day_of_week,
                bool is_left_handed,
-               bool is_portrait
-               )
+               bool is_portrait)
       : _month(month) {
     _page_title = format("%b %Y", _month);
     _grid_string = format("%b", _month);
     _page_height = height;
     _page_width = width;
-//    _note_section_percentage = 0.25;
-    _note_section_percentage = is_portrait?0.085:0.25;
+    //    _note_section_percentage = 0.25;
+    _note_section_percentage = is_portrait ? 0.085 : 0.25;
     _parent = parent_year;
     _first_day_of_week = first_day_of_week;
     _is_left_handed = is_left_handed;
     _is_portrait = is_portrait;
+    _margin_width = margin;
+    _margin_left = _margin_width;
+    _margin_right = _page_width - _margin_width;
   }
 
   std::vector<std::shared_ptr<PlannerBase>>& GetDays() { return _days; }
@@ -103,8 +105,7 @@ public:
                                                   day_grid_title,
                                                   _margin_width,
                                                   _is_left_handed,
-                                                  _is_portrait
-                                                  )));
+                                                  _is_portrait)));
 
       std::shared_ptr<PlannerBase> prev_day;
 
@@ -149,8 +150,8 @@ public:
       if (true == first_letter_only) {
         weekday_name = weekday_name.substr(0, 1);
       }
-      weekdays.push_back(
-          std::make_shared<PlannerBase>(PlannerBase(weekday_name, _is_left_handed)));
+      weekdays.push_back(std::make_shared<PlannerBase>(
+          PlannerBase(weekday_name, _is_left_handed)));
     }
 
     CreateGrid(doc,
@@ -184,23 +185,24 @@ public:
     date::year_month_day first_day =
         date::year(_month.year()) / _month.month() / 1;
 
-    CreateGrid(doc,
-               page,
-               x_start,
-               y_start,
-               x_stop,
-               y_stop,
-               6,
-               7,
-               _days,
-               true,
-               (date::weekday{first_day}.c_encoding() - _first_day_of_week + 7) % 7,
-               create_thumbnail,
-               PlannerTypes_Month,
-               PlannerTypes_Day,
-               _page_height,
-               padding,
-               true);
+    CreateGrid(
+        doc,
+        page,
+        x_start,
+        y_start,
+        x_stop,
+        y_stop,
+        6,
+        7,
+        _days,
+        true,
+        (date::weekday{first_day}.c_encoding() - _first_day_of_week + 7) % 7,
+        create_thumbnail,
+        PlannerTypes_Month,
+        PlannerTypes_Day,
+        _page_height,
+        padding,
+        true);
   }
 
   void CreateDaysSection(HPDF_Doc& doc) {
@@ -210,20 +212,16 @@ public:
     HPDF_REAL section_x_stop;
     HPDF_REAL section_y_stop;
 
-
-    if(true == _is_left_handed)
-    {
+    if (true == _is_left_handed) {
       section_x_start = 0;
       section_y_start = _page_title_font_size * 2;
-      section_x_stop  = _page_width - notes_divider_x;
-      section_y_stop  = _page_height;
-    }
-    else
-    {
+      section_x_stop = _page_width - notes_divider_x;
+      section_y_stop = _page_height;
+    } else {
       section_x_start = notes_divider_x;
       section_y_start = _page_title_font_size * 2;
-      section_x_stop  = _page_width;
-      section_y_stop  = _page_height;
+      section_x_stop = _page_width;
+      section_y_stop = _page_height;
     }
     CreateWeekdayHeader(doc,
                         _page,
@@ -275,7 +273,9 @@ public:
     AddDays();
     BuildDays(doc);
     CreateDaysSection(doc);
-    CreateNotesSection();
+    if (false == _is_portrait) {
+      CreateNotesSection();
+    }
   }
 };
 #endif // PLANNER_MONTH_HPP

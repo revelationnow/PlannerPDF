@@ -59,8 +59,7 @@ public:
              std::string grid_string,
              HPDF_REAL margin,
              bool is_left_handed,
-             bool is_portrait
-             )
+             bool is_portrait)
       : _day((date::year_month_day){
             (date::year)year, (date::month)month, (date::day)day}) {
     _page_height = height;
@@ -69,6 +68,8 @@ public:
     _grid_string = grid_string;
     _parent = parent_month;
     _margin_width = margin;
+    _margin_left = _margin_width;
+    _margin_right = _page_width - _margin_width;
     _is_left_handed = is_left_handed;
     _is_portrait = is_portrait;
   }
@@ -82,28 +83,26 @@ public:
     HPDF_REAL section_y_stop;
     HPDF_REAL years_section_text_x;
 
-    if(true == _is_left_handed)
-    {
+    if (true == _is_left_handed) {
       section_x_start = 0;
       section_y_start = _page_title_font_size * 2;
-      section_x_stop  = _page_width - notes_divider_x;
-      section_y_stop  = _page_height;
+      section_x_stop = _page_width - notes_divider_x;
+      section_y_stop = _page_height;
       years_section_text_x = GetCenteredTextXPosition(
-        _page, year_title_string, section_x_start, section_x_stop);
-    }
-    else
-    {
+          _page, year_title_string, section_x_start, section_x_stop);
+    } else {
       section_x_start = notes_divider_x;
       section_y_start = _page_title_font_size * 2;
-      section_x_stop  = _page_width;
-      section_y_stop  = _page_height;
+      section_x_stop = _page_width;
+      section_y_stop = _page_height;
       years_section_text_x = GetCenteredTextXPosition(
-        _page, year_title_string, notes_divider_x, _page_width);
+          _page, year_title_string, notes_divider_x, _page_width);
     }
     HPDF_Page_BeginText(_page);
     HPDF_Page_MoveTextPos(_page,
                           years_section_text_x,
-                          _page_height - (section_y_start + _note_title_font_size + 10) );
+                          _page_height -
+                              (section_y_start + _note_title_font_size + 10));
     HPDF_Page_ShowText(_page, year_title_string.c_str());
     HPDF_Page_EndText(_page);
 

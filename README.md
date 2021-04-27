@@ -22,6 +22,9 @@ The day view. Click on the title to go back to the month view. Use the arrows to
 The day view in the left handed version of this document.
 ![Day Page Left handed](./screenshots/day_view_left_handed.png)
 
+The year view in left handed portrait mode.
+![Year_Page_Portrait_Left_handed](./screenshots/portrait_left_handed_year.png)
+
 # Available Samples
 8 different sample files are available in the samples directory incase you do not wish to compile and generate the file yourself.
 Each sample file has an original file and compressed version which is smaller in size but maintains most of the fidelity of the original.
