@@ -63,7 +63,7 @@ public:
               bool is_portrait)
       : _base_date((date::year)year, (date::month)1, (date::day)1),
         _filename(filename), _num_years(num_years) {
-    _page_title = "Planner";
+    _page_title = "  Planner  ";
     _page_height = height;
     _page_width = width;
     _margin_width = margin;
