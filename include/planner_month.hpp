@@ -62,7 +62,7 @@ public:
                bool is_left_handed,
                bool is_portrait)
       : _month(month) {
-    _page_title = format("%b %Y", _month);
+    _page_title = format(" %b %Y ", _month);
     _grid_string = format("%b", _month);
     _page_height = height;
     _page_width = width;
