@@ -39,6 +39,11 @@
 #include <typeinfo>
 #include <vector>
 
+#define FILL_BLACK 0.0
+#define FILL_TITLE 0.8
+#define FILL_LIGHT 0.9
+#define FILL_DARK 0.5
+
 /*!
  * @brief
  * Base class for the different Planner elements
@@ -241,12 +246,22 @@ public:
     HPDF_Page_SetLineWidth(_page, 1);
     HPDF_REAL page_title_text_x =
         GetCenteredTextXPosition(_page, _page_title, 0, _page_width);
+    HPDF_REAL length = HPDF_Page_TextWidth(_page, _page_title.c_str());
+
+    HPDF_Page_SetGrayFill(_page, FILL_TITLE);
+    HPDF_Page_Rectangle(_page,
+        page_title_text_x,
+        _page_height - (_page_title_font_size * 2),
+        length,
+        (_page_title_font_size * 2));
+    HPDF_Page_Fill(_page);
+    HPDF_Page_SetGrayFill(_page, 0.0);
+
     HPDF_Page_BeginText(_page);
     HPDF_Page_MoveTextPos(
         _page, page_title_text_x, _page_height - _page_title_font_size - 10);
     if (NULL != _parent) {
       HPDF_Destination dest = HPDF_Page_CreateDestination(_parent->GetPage());
-      HPDF_REAL length = HPDF_Page_TextWidth(_page, _page_title.c_str());
       HPDF_Rect rect = {page_title_text_x,
                         _page_height,
                         page_title_text_x + length,
@@ -270,19 +285,28 @@ public:
     HPDF_Page_SetFontAndSize(_page, _notes_font, _page_title_font_size);
     HPDF_Page_SetLineWidth(_page, 1);
     /* Add navigation to left and right */
-    std::string left_string = "<";
-    std::string right_string = ">";
+    std::string left_string = " < ";
+    std::string right_string = " > ";
     HPDF_REAL page_title_text_x =
         GetCenteredTextXPosition(_page, _page_title, 0, _page_width);
 
     /* Add left navigation */
     if (NULL != _left) {
+      HPDF_REAL length = HPDF_Page_TextWidth(_page, left_string.c_str());
+      HPDF_Page_SetGrayFill(_page, FILL_TITLE);
+      HPDF_Page_Rectangle(_page,
+                        page_title_text_x - 100,
+                        _page_height - (_page_title_font_size * 2),
+                        length,
+                        (_page_title_font_size * 2));
+      HPDF_Page_Fill(_page);
+      HPDF_Page_SetGrayFill(_page, 0.0);
+
       HPDF_Page_BeginText(_page);
       HPDF_Page_MoveTextPos(_page,
                             page_title_text_x - 100,
                             _page_height - _page_title_font_size - 10);
       HPDF_Destination dest = HPDF_Page_CreateDestination(_left->GetPage());
-      HPDF_REAL length = HPDF_Page_TextWidth(_page, left_string.c_str());
       HPDF_Rect rect = {page_title_text_x - 100,
                         _page_height,
                         page_title_text_x - 100 + length,
@@ -295,12 +319,20 @@ public:
     /* Add right navigation */
     if (NULL != _right) {
       HPDF_REAL title_length = HPDF_Page_TextWidth(_page, _page_title.c_str());
+      HPDF_REAL length = HPDF_Page_TextWidth(_page, right_string.c_str());
+      HPDF_Page_SetGrayFill(_page, FILL_TITLE);
+      HPDF_Page_Rectangle(_page,
+                        page_title_text_x + title_length + 100,
+                        _page_height - (_page_title_font_size * 2),
+                        length,
+                        (_page_title_font_size * 2));
+      HPDF_Page_Fill(_page);
+      HPDF_Page_SetGrayFill(_page, 0.0);
       HPDF_Page_BeginText(_page);
       HPDF_Page_MoveTextPos(_page,
                             page_title_text_x + title_length + 100,
                             _page_height - _page_title_font_size - 10);
       HPDF_Destination dest = HPDF_Page_CreateDestination(_right->GetPage());
-      HPDF_REAL length = HPDF_Page_TextWidth(_page, right_string.c_str());
       HPDF_Rect rect = {page_title_text_x + title_length + 100,
                         _page_height,
                         page_title_text_x + title_length + 100 + length,
@@ -422,6 +454,21 @@ public:
         HPDF_REAL x_pad_end = x + x_step_size - padding;
         HPDF_REAL y_pad_end = y + y_step_size - padding;
         if (first_entry_offset == 0) {
+
+          if (true == create_annotations) {
+//            std::cout << "[DBG]Grid: " << num_rows << " " << num_cols << " \n" ;
+//          std::cout << "[DBG]HPDF_Page_SetGrayFill for " << page << " "
+//                    << objects[object_index]->GetGridString().c_str() << "\n" ;
+            HPDF_Page_SetGrayFill(page, FILL_LIGHT);
+            HPDF_Page_Rectangle(page,
+                x_pad_start +4,
+                page_height - y_pad_end +4,
+                x_pad_end - x_pad_start -8,
+                y_pad_end - y_pad_start -8);
+            HPDF_Page_Fill(page);
+            HPDF_Page_SetGrayFill(page, 0.0);
+          }
+
           HPDF_Page_BeginText(page);
           HPDF_REAL grid_x_start =
               GetCenteredTextXPosition(page,
@@ -454,6 +501,7 @@ public:
                              objects[object_index]->GetGridString().c_str());
           HPDF_Page_EndText(page);
 
+//          std::cout << "[DBG]CreateThumbnailCaller for " << page_type << " " << object_index << " " << page << "\n" ;
           if (true == create_thumbnail) {
             CreateThumbnailCaller(doc,
                                   page,

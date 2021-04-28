@@ -63,7 +63,7 @@ public:
               bool is_portrait)
       : _base_date((date::year)year, (date::month)1, (date::day)1),
         _filename(filename), _num_years(num_years) {
-    _page_title = "Planner";
+    _page_title = "  Planner  ";
     _page_height = height;
     _page_width = width;
     _margin_width = margin;
@@ -124,6 +124,7 @@ public:
     HPDF_Page_ShowText(_page, year_title_string.c_str());
     HPDF_Page_EndText(_page);
 
+//    std::cout << "[DBG]CreateYearsSection " << "\n" ;
     CreateGrid(doc,
                _page,
                section_x_start + 20,

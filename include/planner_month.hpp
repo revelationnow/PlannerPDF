@@ -46,7 +46,7 @@ class PlannerMonth : public PlannerBase {
 public:
   PlannerMonth()
       : _month((date::year_month){(date::year)2021, (date::month)1}) {
-    _page_title = format("%b %Y", _month);
+    _page_title = format("  %b %Y  ", _month);
     _grid_string = format("%b", _month);
     _page_height = Remarkable_height_px;
     _page_width = Remarkable_width_px;
@@ -62,7 +62,7 @@ public:
                bool is_left_handed,
                bool is_portrait)
       : _month(month) {
-    _page_title = format("%b %Y", _month);
+    _page_title = format("  %b %Y  ", _month);
     _grid_string = format("%b", _month);
     _page_height = height;
     _page_width = width;
@@ -87,7 +87,7 @@ public:
 
     for (size_t i = 1; i <= num_days; i++) {
       std::string day_page_title = format(
-          "%B %d %Y",
+          "  %B %d %Y  ",
           (date::year_month_day)((date::sys_days)temp1 + (date::days)(i - 1)));
       std::string day_grid_title = format(
           "%d",
@@ -154,6 +154,7 @@ public:
           PlannerBase(weekday_name, _is_left_handed)));
     }
 
+//    std::cout << "[DBG]CreateWeekdayHeader " << "\n" ;
     CreateGrid(doc,
                page,
                x_start,
@@ -185,6 +186,7 @@ public:
     date::year_month_day first_day =
         date::year(_month.year()) / _month.month() / 1;
 
+//    std::cout << "[DBG]AddDaysSection " << "\n" ;
     CreateGrid(
         doc,
         page,
@@ -205,6 +207,7 @@ public:
         true);
   }
 
+  // Month Page with Days
   void CreateDaysSection(HPDF_Doc& doc) {
     HPDF_REAL notes_divider_x = _page_width * _note_section_percentage;
     HPDF_REAL section_x_start;
@@ -232,6 +235,7 @@ public:
                         false,
                         10,
                         false);
+  
     AddDaysSection(doc,
                    _page,
                    section_x_start + 30,
@@ -242,6 +246,7 @@ public:
                    10);
   }
 
+  // Year Page with Months
   void CreateThumbnail(HPDF_Doc& doc,
                        HPDF_Page& page,
                        HPDF_REAL x_start,
