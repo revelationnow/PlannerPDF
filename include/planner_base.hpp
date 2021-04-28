@@ -473,10 +473,6 @@ public:
         if (first_entry_offset == 0) {
 
           if (true == create_annotations) {
-//            std::cout << "[DBG]Grid: " << num_rows << " " << num_cols << " \n" ;
-//          std::cout << "[DBG]HPDF_Page_SetGrayFill for " << page << " "
-//                    << objects[object_index]->GetGridString().c_str() << "\n" ;
-
             PaintRect(page,
                 x_pad_start +4,
                 page_height - y_pad_end +4,
@@ -517,7 +513,6 @@ public:
                              objects[object_index]->GetGridString().c_str());
           HPDF_Page_EndText(page);
 
-//          std::cout << "[DBG]CreateThumbnailCaller for " << page_type << " " << object_index << " " << page << "\n" ;
           if (true == create_thumbnail) {
             CreateThumbnailCaller(doc,
                                   page,

@@ -185,7 +185,6 @@ public:
     date::year_month_day first_day =
         date::year(_month.year()) / _month.month() / 1;
 
-//    std::cout << "[DBG]AddDaysSection " << "\n" ;
     CreateGrid(
         doc,
         page,
