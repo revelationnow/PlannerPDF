@@ -59,7 +59,7 @@ public:
               bool is_left_handed,
               bool is_portrait)
       : _year(year) {
-    _page_title = format("  %Y  ", _year);
+    _page_title = format("%Y", _year);
     _grid_string = format("%Y", _year);
     _page_height = height;
     _page_width = width;

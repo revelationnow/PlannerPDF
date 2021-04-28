@@ -241,19 +241,21 @@ public:
    * Function to paint the background of a link/anchor.
    */
   void PaintRect(HPDF_Page& page,
+                 HPDF_REAL page_height,
                  HPDF_REAL rect_x_start,
                  HPDF_REAL rect_y_start,
-                 HPDF_REAL rect_x_length,
-                 HPDF_REAL rect_y_length,
-                 HPDF_REAL gray
-                 ) {
-    HPDF_REAL grayfill = HPDF_Page_GetGrayFill(page) ;
+                 HPDF_REAL rect_x_stop,
+                 HPDF_REAL rect_y_stop,
+                 HPDF_REAL padding_x,
+                 HPDF_REAL padding_y,
+                 HPDF_REAL gray) {
+    HPDF_REAL grayfill = HPDF_Page_GetGrayFill(page);
     HPDF_Page_SetGrayFill(page, gray);
-    HPDF_Page_Rectangle(page,
-        rect_x_start,
-        rect_y_start,
-        rect_x_length,
-        rect_y_length);
+    HPDF_STATUS status = HPDF_Page_Rectangle(page,
+                                             rect_x_start - padding_x,
+                                             page_height - (rect_y_stop + padding_y),
+                                             rect_x_stop - rect_x_start + (2 * padding_x),
+                                             rect_y_stop - rect_y_start + (2 * padding_y));
     HPDF_Page_Fill(page);
     HPDF_Page_SetGrayFill(page, grayfill);
   }
@@ -268,28 +270,38 @@ public:
     HPDF_REAL page_title_text_x =
         GetCenteredTextXPosition(_page, _page_title, 0, _page_width);
     HPDF_REAL length = HPDF_Page_TextWidth(_page, _page_title.c_str());
+    HPDF_REAL x_padding = 20;
+    HPDF_REAL y_padding = 0;
 
     PaintRect(_page,
-        page_title_text_x,
-        _page_height - (_page_title_font_size * 2),
-        length,
-        (_page_title_font_size * 2),
-        FILL_TITLE);
+              _page_height,
+              page_title_text_x,
+              0,
+              page_title_text_x + length,
+              _page_title_font_size * 2,
+              x_padding,
+              y_padding,
+              FILL_TITLE);
 
     HPDF_Page_BeginText(_page);
     HPDF_Page_MoveTextPos(
         _page, page_title_text_x, _page_height - _page_title_font_size - 10);
     if (NULL != _parent) {
       HPDF_Destination dest = HPDF_Page_CreateDestination(_parent->GetPage());
-      HPDF_Rect rect = {page_title_text_x,
-                        _page_height,
-                        page_title_text_x + length,
-                        _page_height - (_page_title_font_size * 2)};
+      HPDF_Rect rect = {page_title_text_x - x_padding,
+                        _page_height - y_padding,
+                        page_title_text_x + length + x_padding,
+                        _page_height - ((_page_title_font_size * 2) + y_padding)};
       HPDF_Annotation annotation = HPDF_Page_CreateLinkAnnot(_page, rect, dest);
     }
     HPDF_Page_ShowText(_page, _page_title.c_str());
     HPDF_Page_EndText(_page);
 
+    DrawTitleSeparator();
+
+  }
+
+  void DrawTitleSeparator() {
     HPDF_Page_SetLineWidth(_page, 2);
     HPDF_Page_MoveTo(_page, 0, _page_height - (_page_title_font_size * 2));
     HPDF_Page_LineTo(
@@ -304,31 +316,36 @@ public:
     HPDF_Page_SetFontAndSize(_page, _notes_font, _page_title_font_size);
     HPDF_Page_SetLineWidth(_page, 1);
     /* Add navigation to left and right */
-    std::string left_string = " < ";
-    std::string right_string = " > ";
+    std::string left_string = "<";
+    std::string right_string = ">";
     HPDF_REAL page_title_text_x =
         GetCenteredTextXPosition(_page, _page_title, 0, _page_width);
+    HPDF_REAL x_padding = 20;
+    HPDF_REAL y_padding = 0;
 
     /* Add left navigation */
     if (NULL != _left) {
       HPDF_REAL length = HPDF_Page_TextWidth(_page, left_string.c_str());
 
       PaintRect(_page,
-                        page_title_text_x - 100,
-                        _page_height - (_page_title_font_size * 2),
-                        length,
-                        (_page_title_font_size * 2),
-                        FILL_TITLE);
+                _page_height,
+                page_title_text_x - 100,
+                0,
+                page_title_text_x - 100 + length,
+                (_page_title_font_size * 2),
+                x_padding,
+                y_padding,
+                FILL_TITLE);
 
       HPDF_Page_BeginText(_page);
       HPDF_Page_MoveTextPos(_page,
                             page_title_text_x - 100,
                             _page_height - _page_title_font_size - 10);
       HPDF_Destination dest = HPDF_Page_CreateDestination(_left->GetPage());
-      HPDF_Rect rect = {page_title_text_x - 100,
-                        _page_height,
-                        page_title_text_x - 100 + length,
-                        _page_height - (_page_title_font_size * 2)};
+      HPDF_Rect rect = {page_title_text_x - 100 - x_padding,
+                        _page_height - y_padding,
+                        page_title_text_x - 100 + length + x_padding,
+                        _page_height - ((_page_title_font_size * 2) + y_padding)};
       HPDF_Annotation annotation = HPDF_Page_CreateLinkAnnot(_page, rect, dest);
       HPDF_Page_ShowText(_page, left_string.c_str());
       HPDF_Page_EndText(_page);
@@ -340,24 +357,28 @@ public:
       HPDF_REAL length = HPDF_Page_TextWidth(_page, right_string.c_str());
 
       PaintRect(_page,
-                        page_title_text_x + title_length + 100,
-                        _page_height - (_page_title_font_size * 2),
-                        length,
-                        (_page_title_font_size * 2),
-                        FILL_TITLE);
+                _page_height,
+                page_title_text_x + title_length + 100 - length,
+                0,
+                page_title_text_x + title_length + 100,
+                (_page_title_font_size * 2),
+                x_padding,
+                y_padding,
+                FILL_TITLE);
       HPDF_Page_BeginText(_page);
       HPDF_Page_MoveTextPos(_page,
-                            page_title_text_x + title_length + 100,
+                            page_title_text_x + title_length + 100 - length,
                             _page_height - _page_title_font_size - 10);
       HPDF_Destination dest = HPDF_Page_CreateDestination(_right->GetPage());
-      HPDF_Rect rect = {page_title_text_x + title_length + 100,
-                        _page_height,
-                        page_title_text_x + title_length + 100 + length,
-                        _page_height - (_page_title_font_size * 2)};
+      HPDF_Rect rect = {page_title_text_x + title_length + 100 - length - x_padding,
+                        _page_height - y_padding,
+                        page_title_text_x + title_length + 100 + x_padding,
+                        _page_height - ((_page_title_font_size * 2) + y_padding)};
       HPDF_Annotation annotation = HPDF_Page_CreateLinkAnnot(_page, rect, dest);
       HPDF_Page_ShowText(_page, right_string.c_str());
       HPDF_Page_EndText(_page);
     }
+    DrawTitleSeparator();
   }
 
   /*!
@@ -473,12 +494,19 @@ public:
         if (first_entry_offset == 0) {
 
           if (true == create_annotations) {
+            HPDF_REAL paint_rect_y_end = y_pad_end;
+            if (true == create_thumbnail) {
+              paint_rect_y_end = y_pad_start + 50;
+            }
             PaintRect(page,
-                x_pad_start +4,
-                page_height - y_pad_end +4,
-                x_pad_end - x_pad_start -8,
-                y_pad_end - y_pad_start -8,
-                FILL_LIGHT);
+                      page_height,
+                      x_pad_start,
+                      y_pad_start,
+                      x_pad_end,
+                      paint_rect_y_end,
+                      0,
+                      0,
+                      FILL_LIGHT);
           }
 
           HPDF_Page_BeginText(page);
@@ -501,7 +529,10 @@ public:
                 HPDF_Page_CreateDestination(objects[object_index]->GetPage());
             HPDF_REAL rect_y_end = page_height - y_pad_end;
             if (true == create_thumbnail) {
-              rect_y_end = page_height - y_pad_start - 50;
+              // To avoid the link covering the entire thumbnail, limit
+              // annotation rect height to 50 pixels
+              // TODO: Replace 50 with actual height of title of thumbnail
+              rect_y_end = page_height - (y_pad_start + 50);
             }
             HPDF_Rect rect = {
                 x_pad_start, rect_y_end, x_pad_end, page_height - y_pad_start};

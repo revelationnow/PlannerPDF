@@ -46,7 +46,7 @@ class PlannerMonth : public PlannerBase {
 public:
   PlannerMonth()
       : _month((date::year_month){(date::year)2021, (date::month)1}) {
-    _page_title = format("  %b %Y  ", _month);
+    _page_title = format("%b %Y", _month);
     _grid_string = format("%b", _month);
     _page_height = Remarkable_height_px;
     _page_width = Remarkable_width_px;
@@ -62,7 +62,7 @@ public:
                bool is_left_handed,
                bool is_portrait)
       : _month(month) {
-    _page_title = format("  %b %Y  ", _month);
+    _page_title = format(" %b %Y ", _month);
     _grid_string = format("%b", _month);
     _page_height = height;
     _page_width = width;
@@ -87,7 +87,7 @@ public:
 
     for (size_t i = 1; i <= num_days; i++) {
       std::string day_page_title = format(
-          "  %B %d %Y  ",
+          "%B %d %Y",
           (date::year_month_day)((date::sys_days)temp1 + (date::days)(i - 1)));
       std::string day_grid_title = format(
           "%d",
