@@ -26,18 +26,10 @@ The year view in left handed portrait mode.
 ![Year_Page_Portrait_Left_handed](./screenshots/portrait_left_handed_year.png)
 
 # Available Samples
-8 different sample files are available in the samples directory incase you do not wish to compile and generate the file yourself.
+Several sample files are available for use which don't require you to compile the code and generate the files yourself.
 Each sample file has an original file and compressed version which is smaller in size but maintains most of the fidelity of the original.
 The different files are labeled according to their differences.
-
-Below is a summary of a few of the files.
-
-                        FILE NAME                         |                  DESCRIPTION
-    ______________________________________________________|_____________________________________________________________________________________________
-    calendar_2021_1year_Monday_start_left_handed_v1_0.pdf | Start year is 2021. It is a one year planner with days starting on Monday and is left handed
-    calendar_2021_5year_Monday_start_left_handed_v1_0.pdf | Start year is 2021. It is a five year planner with days starting on Monday and is left handed
-    calendar_2021_5year_Sunday_start_right_handed_v1_0.pdf| Start year is 2021. It is a five year planner with days starting on Sunday and is right handed
-
+The samples directory structure is divided into a lefthanded/righthanded tree under which it has portrati and landscape directories under which there are separate options for monday start Sunday start files.
 
 
 # How to compile
