@@ -97,7 +97,6 @@ public:
       section_y_stop = _page_height;
     }
 
-//    std::cout << "[DBG]AddMonthsSection " << "\n" ;
     CreateGrid(doc,
                _page,
                section_x_start + 15,

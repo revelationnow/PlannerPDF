@@ -238,6 +238,27 @@ public:
   }
 
   /*!
+   * Function to paint the background of a link/anchor.
+   */
+  void PaintRect(HPDF_Page& page,
+                 HPDF_REAL rect_x_start,
+                 HPDF_REAL rect_y_start,
+                 HPDF_REAL rect_x_length,
+                 HPDF_REAL rect_y_length,
+                 HPDF_REAL gray
+                 ) {
+    HPDF_REAL grayfill = HPDF_Page_GetGrayFill(page) ;
+    HPDF_Page_SetGrayFill(page, gray);
+    HPDF_Page_Rectangle(page,
+        rect_x_start,
+        rect_y_start,
+        rect_x_length,
+        rect_y_length);
+    HPDF_Page_Fill(page);
+    HPDF_Page_SetGrayFill(page, grayfill);
+  }
+
+  /*!
    * Function to generate the title of a page. The title of the page when
    * clicked on will navigate to the parent page.
    */
@@ -248,14 +269,12 @@ public:
         GetCenteredTextXPosition(_page, _page_title, 0, _page_width);
     HPDF_REAL length = HPDF_Page_TextWidth(_page, _page_title.c_str());
 
-    HPDF_Page_SetGrayFill(_page, FILL_TITLE);
-    HPDF_Page_Rectangle(_page,
+    PaintRect(_page,
         page_title_text_x,
         _page_height - (_page_title_font_size * 2),
         length,
-        (_page_title_font_size * 2));
-    HPDF_Page_Fill(_page);
-    HPDF_Page_SetGrayFill(_page, 0.0);
+        (_page_title_font_size * 2),
+        FILL_TITLE);
 
     HPDF_Page_BeginText(_page);
     HPDF_Page_MoveTextPos(
@@ -293,14 +312,13 @@ public:
     /* Add left navigation */
     if (NULL != _left) {
       HPDF_REAL length = HPDF_Page_TextWidth(_page, left_string.c_str());
-      HPDF_Page_SetGrayFill(_page, FILL_TITLE);
-      HPDF_Page_Rectangle(_page,
+
+      PaintRect(_page,
                         page_title_text_x - 100,
                         _page_height - (_page_title_font_size * 2),
                         length,
-                        (_page_title_font_size * 2));
-      HPDF_Page_Fill(_page);
-      HPDF_Page_SetGrayFill(_page, 0.0);
+                        (_page_title_font_size * 2),
+                        FILL_TITLE);
 
       HPDF_Page_BeginText(_page);
       HPDF_Page_MoveTextPos(_page,
@@ -320,14 +338,13 @@ public:
     if (NULL != _right) {
       HPDF_REAL title_length = HPDF_Page_TextWidth(_page, _page_title.c_str());
       HPDF_REAL length = HPDF_Page_TextWidth(_page, right_string.c_str());
-      HPDF_Page_SetGrayFill(_page, FILL_TITLE);
-      HPDF_Page_Rectangle(_page,
+
+      PaintRect(_page,
                         page_title_text_x + title_length + 100,
                         _page_height - (_page_title_font_size * 2),
                         length,
-                        (_page_title_font_size * 2));
-      HPDF_Page_Fill(_page);
-      HPDF_Page_SetGrayFill(_page, 0.0);
+                        (_page_title_font_size * 2),
+                        FILL_TITLE);
       HPDF_Page_BeginText(_page);
       HPDF_Page_MoveTextPos(_page,
                             page_title_text_x + title_length + 100,
@@ -459,14 +476,13 @@ public:
 //            std::cout << "[DBG]Grid: " << num_rows << " " << num_cols << " \n" ;
 //          std::cout << "[DBG]HPDF_Page_SetGrayFill for " << page << " "
 //                    << objects[object_index]->GetGridString().c_str() << "\n" ;
-            HPDF_Page_SetGrayFill(page, FILL_LIGHT);
-            HPDF_Page_Rectangle(page,
+
+            PaintRect(page,
                 x_pad_start +4,
                 page_height - y_pad_end +4,
                 x_pad_end - x_pad_start -8,
-                y_pad_end - y_pad_start -8);
-            HPDF_Page_Fill(page);
-            HPDF_Page_SetGrayFill(page, 0.0);
+                y_pad_end - y_pad_start -8,
+                FILL_LIGHT);
           }
 
           HPDF_Page_BeginText(page);

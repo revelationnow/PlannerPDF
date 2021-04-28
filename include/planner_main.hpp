@@ -124,7 +124,6 @@ public:
     HPDF_Page_ShowText(_page, year_title_string.c_str());
     HPDF_Page_EndText(_page);
 
-//    std::cout << "[DBG]CreateYearsSection " << "\n" ;
     CreateGrid(doc,
                _page,
                section_x_start + 20,

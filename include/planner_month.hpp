@@ -154,7 +154,6 @@ public:
           PlannerBase(weekday_name, _is_left_handed)));
     }
 
-//    std::cout << "[DBG]CreateWeekdayHeader " << "\n" ;
     CreateGrid(doc,
                page,
                x_start,
@@ -207,7 +206,6 @@ public:
         true);
   }
 
-  // Month Page with Days
   void CreateDaysSection(HPDF_Doc& doc) {
     HPDF_REAL notes_divider_x = _page_width * _note_section_percentage;
     HPDF_REAL section_x_start;
@@ -235,7 +233,6 @@ public:
                         false,
                         10,
                         false);
-  
     AddDaysSection(doc,
                    _page,
                    section_x_start + 30,
@@ -246,7 +243,6 @@ public:
                    10);
   }
 
-  // Year Page with Months
   void CreateThumbnail(HPDF_Doc& doc,
                        HPDF_Page& page,
                        HPDF_REAL x_start,
