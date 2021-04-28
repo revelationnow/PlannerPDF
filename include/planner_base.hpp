@@ -155,6 +155,7 @@ public:
       HPDF_Page_LineTo(page, x_stop, page_height - y);
       HPDF_Page_Stroke(page);
     }
+    HPDF_Page_SetDash(page, NULL, 0, 0);
   }
 
   void FillAreaWithLines(HPDF_Page& page,
