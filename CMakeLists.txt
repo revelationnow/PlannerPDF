@@ -28,7 +28,7 @@ if(NOT Planner_PDF_VERSION_MAJOR)
 endif()
 
 if(NOT Planner_PDF_VERSION_MINOR)
-  set(Planner_PDF_VERSION_MINOR 1)
+  set(Planner_PDF_VERSION_MINOR 2)
 endif()
 
 if(NOT Planner_PDF_Left_Handed)
@@ -37,6 +37,10 @@ endif()
 
 if(NOT Planner_PDF_Portrait)
   set(Planner_PDF_Portrait 0)
+endif()
+
+if(NOT Planner_PDF_TimeInMargin)
+  set(Planner_PDF_TimeInMargin 0)
 endif()
 
 set(EXEC_NAME Planner_PDF)
@@ -120,7 +124,12 @@ if(${Planner_PDF_Portrait} MATCHES 1)
   set(PORTRAIT_TEXT "Portrait")
 endif()
 
-set(SAMPLE_FILE_TAG "${START_YEAR}_${NUM_YEARS}year_${START_DAY_TEXT}_start_${HANDEDNESS_TEXT}_handed_${PORTRAIT_TEXT}_v${Planner_PDF_VERSION_MAJOR}_${Planner_PDF_VERSION_MINOR}"
+set(TIME_IN_MARGIN "blank_margin")
+if(${Planner_PDF_TimeInMargin} MATCHES 1)
+  set(TIME_IN_MARGIN "time_in_margin")
+endif()
+
+set(SAMPLE_FILE_TAG "${START_YEAR}_${NUM_YEARS}year_${START_DAY_TEXT}_start_${HANDEDNESS_TEXT}_handed_${PORTRAIT_TEXT}_${TIME_IN_MARGIN}_v${Planner_PDF_VERSION_MAJOR}_${Planner_PDF_VERSION_MINOR}"
   )
 
 add_custom_target(
@@ -144,6 +153,7 @@ unset(COMPRESSED_FILE)
 unset(NUM_YEARS)
 unset(START_YEAR)
 unset(Planner_PDF_Portrait)
+unset(Planner_PDF_TimeInMargin)
 unset(Planner_PDF_Left_Handed)
 unset(Planner_PDF_Start_Day)
 unset(Planner_PDF_VERSION_MAJOR)

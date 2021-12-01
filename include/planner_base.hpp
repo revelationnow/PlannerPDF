@@ -74,6 +74,15 @@ protected:
   /*! The left margin of the page */
   HPDF_REAL _margin_left;
 
+  /*! Add time to margin */
+  bool _time_in_margin;
+
+  /*! The gap between two time stamps in lines */
+  int _time_gap_lines;
+
+  /*! The starting time */
+  int _time_start;
+
   /*! The left margin of the page */
   HPDF_REAL _margin_right;
 
@@ -111,7 +120,7 @@ public:
         _page_title_font_size(45), _note_title_font_size(35),
         _grid_string("GridBase"), _margin_width(Remarkable_margin_width_px),
         _is_left_handed(false), _page_width(Remarkable_width_px),
-        _page_height(Remarkable_height_px), _is_portrait(false) {
+        _page_height(Remarkable_height_px), _is_portrait(false), _time_in_margin(false) {
     _margin_left = _margin_width;
     _margin_right = _page_width - _margin_width;
   }
@@ -385,7 +394,7 @@ public:
   /*!
    * Functin to generate the notes section
    */
-  void CreateNotesSection() {
+  void CreateNotesSection(bool time_in_margin) {
     HPDF_Page_SetFontAndSize(_page, _notes_font, _note_title_font_size);
     HPDF_Page_SetLineWidth(_page, 2);
 
@@ -445,6 +454,41 @@ public:
                       notes_y_stop - 30,
                       dot_spacing,
                       _page_height);
+
+    if(time_in_margin)
+    {
+      HPDF_REAL time_x = notes_x_start + margin_x - 10;
+      HPDF_REAL time_y = notes_y_start + (2 * _note_title_font_size);
+      if(_is_left_handed)
+      {
+        time_x = _margin_right + 50;
+      }
+      AddTimeToMargin(time_x ,
+                      time_y ,
+                      dot_spacing,
+                      _page_height);
+    }
+  }
+
+  void AddTimeToMargin(HPDF_REAL x_start,
+                       HPDF_REAL y_start,
+                       HPDF_REAL gap,
+                       HPDF_REAL height
+                       )
+  {
+    char time_str[5];
+    uint32_t i = 0;
+    HPDF_Page_SetFontAndSize(_page, _notes_font, 20);
+    for(HPDF_REAL y = y_start + 2 * _note_title_font_size; y <= height; y = y + _time_gap_lines * gap, i++ )
+    {
+      std::uint32_t time_int = (_time_start + i * 100) % 2400;
+      sprintf(time_str, "%04d",time_int);
+      HPDF_Page_BeginText(_page);
+      HPDF_Page_MoveTextPos(_page, x_start - HPDF_Page_TextWidth(_page, time_str), height - y);
+      HPDF_Page_ShowText(_page, time_str);
+      HPDF_Page_EndText(_page);
+    }
+
   }
 
   /*!

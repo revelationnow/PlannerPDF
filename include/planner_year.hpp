@@ -57,7 +57,10 @@ public:
               HPDF_REAL margin,
               short first_day_of_week,
               bool is_left_handed,
-              bool is_portrait)
+              bool is_portrait,
+              bool time_in_margin,
+              int time_gap_lines,
+              int time_start)
       : _year(year) {
     _page_title = format("%Y", _year);
     _grid_string = format("%Y", _year);
@@ -71,6 +74,9 @@ public:
     _first_day_of_week = first_day_of_week;
     _is_left_handed = is_left_handed;
     _is_portrait = is_portrait;
+    _time_in_margin = time_in_margin;
+    _time_gap_lines = time_gap_lines;
+    _time_start = time_start;
   }
 
   PlannerYear(short year) : _year((date::year)year) {}
@@ -143,7 +149,10 @@ public:
                        _margin_width,
                        _first_day_of_week,
                        _is_left_handed,
-                       _is_portrait)));
+                       _is_portrait,
+                       _time_in_margin,
+                       _time_gap_lines,
+                       _time_start)));
 
       std::shared_ptr<PlannerBase> prev_month;
 
@@ -165,7 +174,7 @@ public:
     AddMonthsSection(doc);
     CreateTitle();
     if (false == _is_portrait) {
-      CreateNotesSection();
+      CreateNotesSection(false);
     }
   }
 };

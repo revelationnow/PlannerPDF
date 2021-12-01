@@ -88,6 +88,8 @@ int main(int argc, char* argv[]) {
   short start_year = 2021;
   short num_years = 5;
   std::string filename = "planner.pdf";
+  int time_gap_lines = 4;
+  int time_start = 700;
 
   if (argc > 1) {
     int start_year_cl = atoi(argv[1]);
@@ -107,6 +109,19 @@ int main(int argc, char* argv[]) {
     filename = argv[3];
   }
 
+  if (argc > 4) {
+    int time_gap_lines_cl = atoi(argv[4]);
+    if((time_gap_lines_cl > 0) && (time_gap_lines_cl < 10)) {
+      time_gap_lines = time_gap_lines_cl;
+    }
+  }
+  if (argc > 5) {
+    int time_start_cl = atoi(argv[5]);
+    if((time_start_cl > 0) && (time_start_cl < 10)) {
+      time_start = time_start_cl;
+    }
+  }
+
   auto Test = std::make_shared<PlannerMain>(PlannerMain(
       start_year,
       filename,
@@ -116,7 +131,11 @@ int main(int argc, char* argv[]) {
       Remarkable_margin_width_px,
       Planner_PDF_Start_Day,
       Planner_PDF_Left_Handed,
-      Planner_PDF_Portrait));
+      Planner_PDF_Portrait,
+      Planner_PDF_TimeInMargin,
+      time_gap_lines,
+      time_start
+      ));
   Test->CreateDocument();
   Test->Build();
   Test->FinishDocument();
