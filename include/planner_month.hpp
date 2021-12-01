@@ -60,7 +60,10 @@ public:
                HPDF_REAL margin,
                short first_day_of_week,
                bool is_left_handed,
-               bool is_portrait)
+               bool is_portrait,
+               bool time_in_margin,
+               int time_gap_lines,
+               int time_start)
       : _month(month) {
     _page_title = format(" %b %Y ", _month);
     _grid_string = format("%b", _month);
@@ -75,6 +78,9 @@ public:
     _margin_width = margin;
     _margin_left = _margin_width;
     _margin_right = _page_width - _margin_width;
+    _time_in_margin = time_in_margin;
+    _time_gap_lines = time_gap_lines;
+    _time_start = time_start;
   }
 
   std::vector<std::shared_ptr<PlannerBase>>& GetDays() { return _days; }
@@ -87,7 +93,7 @@ public:
 
     for (size_t i = 1; i <= num_days; i++) {
       std::string day_page_title = format(
-          "%B %d %Y",
+          "%a %B %d %Y",
           (date::year_month_day)((date::sys_days)temp1 + (date::days)(i - 1)));
       std::string day_grid_title = format(
           "%d",
@@ -105,7 +111,10 @@ public:
                                                   day_grid_title,
                                                   _margin_width,
                                                   _is_left_handed,
-                                                  _is_portrait)));
+                                                  _is_portrait,
+                                                  _time_in_margin,
+                                                  _time_gap_lines,
+                                                  _time_start)));
 
       std::shared_ptr<PlannerBase> prev_day;
 
@@ -274,7 +283,7 @@ public:
     BuildDays(doc);
     CreateDaysSection(doc);
     if (false == _is_portrait) {
-      CreateNotesSection();
+      CreateNotesSection(false);
     }
   }
 };

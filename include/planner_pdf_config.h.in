@@ -37,3 +37,4 @@
 #define Planner_PDF_Left_Handed @Planner_PDF_Left_Handed@
 
 #define Planner_PDF_Portrait @Planner_PDF_Portrait@
+#define Planner_PDF_TimeInMargin @Planner_PDF_TimeInMargin@

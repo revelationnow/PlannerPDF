@@ -59,7 +59,10 @@ public:
              std::string grid_string,
              HPDF_REAL margin,
              bool is_left_handed,
-             bool is_portrait)
+             bool is_portrait,
+             bool time_in_margin,
+             int time_gap_lines,
+             int time_start)
       : _day((date::year_month_day){
             (date::year)year, (date::month)month, (date::day)day}) {
     _page_height = height;
@@ -72,6 +75,9 @@ public:
     _margin_right = _page_width - _margin_width;
     _is_left_handed = is_left_handed;
     _is_portrait = is_portrait;
+    _time_in_margin = time_in_margin;
+    _time_gap_lines = time_gap_lines;
+    _time_start = time_start;
   }
 
   void CreateTasksSection(HPDF_Doc& doc) {
@@ -124,7 +130,7 @@ public:
   void Build(HPDF_Doc& doc) {
     CreatePage(doc, _page_height, _page_width);
     CreateTitle();
-    CreateNotesSection();
+    CreateNotesSection(_time_in_margin);
     CreateTasksSection(doc);
   }
 };

@@ -69,7 +69,7 @@ public:
 
   void Build(HPDF_Doc& doc) {
     CreatePage(doc, _page_height, _page_width);
-    CreateNotesSection();
+    CreateNotesSection(false);
   }
 };
 #endif // PLANNER_WEEK_HPP

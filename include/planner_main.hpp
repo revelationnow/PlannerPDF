@@ -60,9 +60,13 @@ public:
               HPDF_REAL margin,
               short first_day_of_week,
               bool is_left_handed,
-              bool is_portrait)
+              bool is_portrait,
+              bool time_in_margin,
+              int time_gap_lines,
+              int time_start
+              )
       : _base_date((date::year)year, (date::month)1, (date::day)1),
-        _filename(filename), _num_years(num_years) {
+        _filename(filename), _num_years(num_years)  {
     _page_title = "  Planner  ";
     _page_height = height;
     _page_width = width;
@@ -73,6 +77,9 @@ public:
     _is_left_handed = is_left_handed;
     _is_portrait = is_portrait;
     _note_section_percentage = 0.5;
+    _time_in_margin = time_in_margin;
+    _time_gap_lines = time_gap_lines;
+    _time_start = time_start;
   }
 
   static void
@@ -168,7 +175,10 @@ public:
                                                     _margin_width,
                                                     _first_day_of_week,
                                                     _is_left_handed,
-                                                    _is_portrait)));
+                                                    _is_portrait,
+                                                    _time_in_margin,
+                                                    _time_gap_lines,
+                                                    _time_start)));
       if (loop_index != 0) {
         _years.back()->SetLeft(_years[loop_index - 1]);
         _years[loop_index - 1]->SetRight(_years.back());
@@ -177,7 +187,7 @@ public:
     CreateTitle();
     BuildYears();
     CreateNavigation();
-    CreateNotesSection();
+    CreateNotesSection(false);
     CreateYearsSection(_pdf);
   }
 
