@@ -24,11 +24,11 @@ elseif( ${Planner_PDF_Start_Day} GREATER 6)
 endif()
 
 if(NOT Planner_PDF_VERSION_MAJOR)
-  set(Planner_PDF_VERSION_MAJOR 1)
+  set(Planner_PDF_VERSION_MAJOR 2023)
 endif()
 
 if(NOT Planner_PDF_VERSION_MINOR)
-  set(Planner_PDF_VERSION_MINOR 2)
+  set(Planner_PDF_VERSION_MINOR 0)
 endif()
 
 if(NOT Planner_PDF_Left_Handed)
@@ -56,6 +56,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # add the executable
 add_executable(${EXEC_NAME} src/planner_pdf.cpp)
 
+if (EMSCRIPTEN)
+  include_directories(~/Work/PDF_Lib/libharu/build/include)
+  link_directories(~/Work/PDF_Lib/libharu/build/src)
+endif()
+
 target_link_libraries( Planner_PDF hpdf )
 target_include_directories( Planner_PDF PUBLIC
                            "${PROJECT_BINARY_DIR}"
@@ -63,6 +68,11 @@ target_include_directories( Planner_PDF PUBLIC
 target_include_directories( Planner_PDF PUBLIC
   "${PROJECT_SOURCE_DIR}/include"
                           )
+
+if (EMSCRIPTEN)
+  target_include_directories( Planner_PDF PUBLIC "/usr/local/include")
+endif()
+
 
 add_custom_target(
   create

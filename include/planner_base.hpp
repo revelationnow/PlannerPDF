@@ -479,7 +479,8 @@ public:
     char time_str[5];
     uint32_t i = 0;
     HPDF_Page_SetFontAndSize(_page, _notes_font, 20);
-    for(HPDF_REAL y = y_start + 2 * _note_title_font_size; y <= height; y = y + _time_gap_lines * gap, i++ )
+    uint32_t time_gap_lines = 2;
+    for(HPDF_REAL y = y_start + _note_title_font_size; y <= height; y = y + time_gap_lines * gap, i++ )
     {
       std::uint32_t time_int = (_time_start + i * 100) % 2400;
       sprintf(time_str, "%04d",time_int);
@@ -487,6 +488,10 @@ public:
       HPDF_Page_MoveTextPos(_page, x_start - HPDF_Page_TextWidth(_page, time_str), height - y);
       HPDF_Page_ShowText(_page, time_str);
       HPDF_Page_EndText(_page);
+      if(i == 1)
+      {
+        time_gap_lines = _time_gap_lines;
+      }
     }
 
   }
