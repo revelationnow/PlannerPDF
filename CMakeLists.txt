@@ -24,7 +24,7 @@ elseif( ${Planner_PDF_Start_Day} GREATER 6)
 endif()
 
 if(NOT Planner_PDF_VERSION_MAJOR)
-  set(Planner_PDF_VERSION_MAJOR 2023)
+  set(Planner_PDF_VERSION_MAJOR 2026)
 endif()
 
 if(NOT Planner_PDF_VERSION_MINOR)
